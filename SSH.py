@@ -49,9 +49,9 @@ def ping(command):
 
 def Ls(command):
 	response=""
-	etc = "acpi                           ec2_version         libpaper.d      overlayroot.conf         services\n" + "adduser.conf                   emacs               lighttpd        overlayroot.local.conf   sgml\n" +"alternatives                   environment         locale.alias    pam.conf                 shadow\n" + "apache2                        fonts               locale.gen      pam.d                    shadow-\n" + "apm                            fstab               localtime       papersize                shells\n" + "apparmor                       fuse.conf           logcheck        passwd                   siege\n" +"apparmor.d                     gai.conf            login.defs      passwd-                  skel\n" + "apport                         groff               logrotate.conf  perl                     sos.conf\n" +"apt                            group               logrotate.d     pm                       ssh\n" + "at.deny                        group-              lsb-release     polkit-1                 ssl\n" + "audisp                         grub.d              ltrace.conf     pollinate                subgid\n" + "audit                          gshadow             lvm             popularity-contest.conf  subgid-\n" + "bash.bashrc                    gshadow-            machine-id      ppp                      subuid\n" + "bash_completion                gss                 magic           profile                  subuid-\n" + "bash_completion.d              gtk-2.0             magic.mime      profile.d                subversion\n" + "bindresvport.blacklist         hdparm.conf         mailcap         protocols                sudoers\n" + "binfmt.d                       host.conf           mailcap.order   proxychains.conf         sudoers.d\n" + "byobu                          hostname            manpath.config  python                   supervisor\n" + "ca-certificates                hosts               mdadm           python2.7                sysctl.conf\n" + "ca-certificates.conf           hosts.allow         memcached.conf  python3                  sysctl.d\n" + "ca-certificates.conf.dpkg-old  hosts.deny          mime.types      python3.5                sysstat\n" + "calendar                       init                mke2fs.conf     rc0.d                    systemd\n" + "checkinstallrc                 init.d              modprobe.d      rc1.d                    terminfo\n" + "cloud                          initramfs-tools     modules         rc2.d                    timezone\n" + "colordiffrc                    inputrc             modules-load.d  rc3.d                    tmpfiles.d\n" + "console-setup                  insserv             mtab            rc4.d                    tor\n" + "cron.d                         insserv.conf        mysql           rc5.d                    ucf.conf\n" + "cron.daily                     insserv.conf.d      node  rc6.d                    udev\n" + "cron.hourly                    iproute2            nanorc          rc.local                 ufw "
+	etc = "acpi                           ec2_version         libpaper.d      overlayroot.conf         services\n\r" + "adduser.conf                   emacs               lighttpd        overlayroot.local.conf   sgml\n\r" +"alternatives                   environment         locale.alias    pam.conf                 shadow\n\r" + "apache2                        fonts               locale.gen      pam.d                    shadow-\n\r" + "apm                            fstab               localtime       papersize                shells\n\r" + "apparmor                       fuse.conf           logcheck        passwd                   siege\n\r" +"apparmor.d                     gai.conf            login.defs      passwd-                  skel\n\r" + "apport                         groff               logrotate.conf  perl                     sos.conf\n\r" +"apt                            group               logrotate.d     pm                       ssh\n\r" + "at.deny                        group-              lsb-release     polkit-1                 ssl\n\r" + "audisp                         grub.d              ltrace.conf     pollinate                subgid\n\r" + "audit                          gshadow             lvm             popularity-contest.conf  subgid-\n\r" + "bash.bashrc                    gshadow-            machine-id      ppp                      subuid\n\r" + "bash_completion                gss                 magic           profile                  subuid-\n\r" + "bash_completion.d              gtk-2.0             magic.mime      profile.d                subversion\n\r" + "bindresvport.blacklist         hdparm.conf         mailcap         protocols                sudoers\n\r" + "binfmt.d                       host.conf           mailcap.order   proxychains.conf         sudoers.d\n\r" + "byobu                          hostname            manpath.config  python                   supervisor\n\r" + "ca-certificates                hosts               mdadm           python2.7                sysctl.conf\n\r" + "ca-certificates.conf           hosts.allow         memcached.conf  python3                  sysctl.d\n\r" + "ca-certificates.conf.dpkg-old  hosts.deny          mime.types      python3.5                sysstat\n\r" + "calendar                       init                mke2fs.conf     rc0.d                    systemd\n\r" + "checkinstallrc                 init.d              modprobe.d      rc1.d                    terminfo\n\r" + "cloud                          initramfs-tools     modules         rc2.d                    timezone\n\r" + "colordiffrc                    inputrc             modules-load.d  rc3.d                    tmpfiles.d\n\r" + "console-setup                  insserv             mtab            rc4.d                    tor\n\r" + "cron.d                         insserv.conf        mysql           rc5.d                    ucf.conf\n\r" + "cron.daily                     insserv.conf.d      node  rc6.d                    udev\n\r" + "cron.hourly                    iproute2            nanorc          rc.local                 ufw "
 
-	fake_fs = "bin   etc   initrd.img.old  lost+found  openvpn-ca  root  snap  tmp var  volume\n" + "boot  home        lib             media       opt         run   srv  vmlinuz\n" + "dev   initrd.img  lib64           mnt         proc        sbin  sys   usr       vmlinuz.old"
+	fake_fs = "bin   etc   initrd.img.old  lost+found  openvpn-ca  root  snap  tmp var  volume\n\r" + "boot  home        lib             media       opt         run   srv  vmlinuz\n\r" + "dev   initrd.img  lib64           mnt         proc        sbin  sys   usr       vmlinuz.old"
 	cmd = command
 	if cmd=="ls":
 		response = "users.txt"
@@ -82,12 +82,36 @@ def cat(command) :
 	
 	
 def ifconfig():
-	response = "ens3      Link encap:Ethernet  HWaddr fa:16:3e:ea:69:d3\n" + "          inet addr:192.168.0.3  Bcast:192.168.0.255  Mask:255.255.255.0\n" + "          inet6 addr: fe80::f816:3eff:feea:69d3/64 Scope:Link\n" + "          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1\n" + "          RX packets:0 errors:0 dropped:0 overruns:0 frame:0\n" + "          TX packets:2 errors:0 dropped:0 overruns:0 carrier:0\n" + "          collisions:0 txqueuelen:0\n" + "          RX bytes:0 (0.0 B)  TX bytes:180 (180.0 B)\n\n" + "lo        Link encap:Local Loopback \n" + "          inet addr:127.0.0.1  Mask:255.0.0.0 \n" + "          inet6 addr: ::1/128 Scope:Host \n" + "          UP LOOPBACK RUNNING  MTU:65536  Metric:1 \n" + "          RX packets:237 errors:0 dropped:0 overruns:0 frame:0 \n" + "          TX packets:237 errors:0 dropped:0 overruns:0 carrier:0 \n" + "          collisions:0 txqueuelen:1 \n" + "          RX bytes:16818 (16.8 KB)  TX bytes:16818 (16.8 KB) \n"
+	response = "ens3: Link encap:Ethernet  HWaddr fa:16:3e:ea:69:d3\n\r" + "        inet addr:192.168.0.3  Bcast:192.168.0.255  Mask:255.255.255.0\n\r" + "        inet6 addr: fe80::f816:3eff:feea:69d3/64 Scope:Link\n\r" + "        UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1\n\r" + "        RX packets:0 errors:0 dropped:0 overruns:0 frame:0\n\r" + "        TX packets:2 errors:0 dropped:0 overruns:0 carrier:0\n\r" + "        collisions:0 txqueuelen:0\n\r" + "        RX bytes:0 (0.0 B)  TX bytes:180 (180.0 B)\n\r\n\r" + "lo: Link encap:Local Loopback \n\r" + "        inet addr:127.0.0.1  Mask:255.0.0.0 \n\r" + "        inet6 addr: ::1/128 Scope:Host \n\r" + "        UP LOOPBACK RUNNING  MTU:65536  Metric:1 \n\r" + "        RX packets:237 errors:0 dropped:0 overruns:0 frame:0 \n\r" + "        TX packets:237 errors:0 dropped:0 overruns:0 carrier:0 \n\r" + "        collisions:0 txqueuelen:1 \n\r" + "        RX bytes:16818 (16.8 KB)  TX bytes:16818 (16.8 KB) \n\r"
 	return response
 	
 def ipa():
-	response = "1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1\n" + "    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00\n" + "    inet 127.0.0.1/8 scope host lo\n" + "       valid_lft forever preferred_lft forever\n" + "    inet6 ::1/128 scope host\n" + "       valid_lft forever preferred_lft forever\n" + "2: ens3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000\n" + "    link/ether fa:16:3e:d6:f2:dd brd ff:ff:ff:ff:ff:ff\n" + "    inet 192.168.0.183/24 brd 192.168.0.255 scope global ens3\n" + "       valid_lft forever preferred_lft forever\n" + "    inet6 fe80::f816:3eff:fed6:f2dd/64 scope link\n" + "       valid_lft forever preferred_lft forever \n"
+	response = "1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1\n\r" + "    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00\n\r" + "    inet 127.0.0.1/8 scope host lo\n\r" + "       valid_lft forever preferred_lft forever\n\r" + "    inet6 ::1/128 scope host\n\r" + "       valid_lft forever preferred_lft forever\n\r" + "2: ens3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000\n\r" + "    link/ether fa:16:3e:d6:f2:dd brd ff:ff:ff:ff:ff:ff\n\r" + "    inet 192.168.0.183/24 brd 192.168.0.255 scope global ens3\n\r" + "       valid_lft forever preferred_lft forever\n\r" + "    inet6 fe80::f816:3eff:fed6:f2dd/64 scope link\n\r" + "       valid_lft forever preferred_lft forever \n\r"
 	return response
+
+def uname():
+	response = "Linux\n\r"
+	return response	
+def whoami():
+	response = "Ubuntu 18.04.4\n\r"
+	return response	
+def hostname():
+	response = "Ubuntu 18.04.4\n\r"
+	return response	
+def route():
+	response="Destination     Gateway         Genmask         Flags Metric Ref    Use Iface\n\r"+"default         192.168.1.2     0.0.0.0         UG    1024   0        0 eth0\n\r"+"192.168.1.0     *               255.255.255.0   U     0      0        0 eth0\n\r"
+	return response	
+def ps():
+	response = "PID   TTY          TIME CMD\n\r12330 pts/0    00:00:00 bash\n\r21621 pts/0    00:00:00 ps"
+	return response
+def psaux():
+	response = "USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND\n\rroot         1  0.0  0.0    892   572 ?        Sl   Nov28   0:00 /init\r\nroot       227  0.0  0.0    900    80 ?        Ss   Nov28   0:00 /init\n\rroot       228  0.0  0.0    900    88 ?        S    Nov28   0:00 /init\n\rzaphod     229  0.0  0.1 749596 31000 pts/0    Ssl+ Nov28   0:15 docker\n\rroot       240  0.0  0.0      0     0 ?        Z    Nov28   0:00 [init] <defunct>\n\rroot       247  0.0  0.0    900    88 ?        S    Nov28   0:00 /init\n\rroot       248  0.0  0.1 1758276 31408 pts/1   Ssl+ Nov28   0:10 /mnt/wsl/docker-desktop/docker-desktop-proxy\n\rroot       283  0.0  0.0    892    80 ?        Ss   Dec01   0:00 /init\n\rroot       284  0.0  0.0    892    80 ?        R    Dec01   0:00 /init\n\rzaphod     285  0.0  0.0  11964  5764 pts/2    Ss   Dec01   0:00 -zsh\n\rzaphod     343  0.0  0.0  23764  9836 pts/2    T    17:44   0:00 vi foo\n\rroot       349  0.0  0.0    892    80 ?        Ss   17:45   0:00 /init\n\rroot       350  0.0  0.0    892    80 ?        S    17:45   0:00 /init\n\rzaphod     351  0.0  0.0  11964  5764 pts/3    Ss+  17:45   0:00 -zsh\n\rzaphod     601  0.0  0.0  10612  3236 pts/2    R+   18:24   0:00 ps aux"
+	return response
+	
+def netstat():
+	response = "UDP\n\r \n\r      udpInDatagrams      =  39228     udpOutDatagrams     =  2455\n\r       udpInErrors         =     0\n\r \n\rTCP\n\r \n\r      tcpRtoAlgorithm     =     4      tcpMaxConn          =    -1\n\r      tcpRtoMax           = 60000      tcpPassiveOpens     =     2\n\r      tcpActiveOpens      =     4      tcpEstabResets      =     1\n\r      tcpAttemptFails     =     3      tcpOutSegs          =   315\n\r      tcpCurrEstab        =     1      tcpOutDataBytes     = 10547\n\r     tcpOutDataSegs      =   288      tcpRetransBytes     =  8376\n\r      tcpRetransSegs      =    29      tcpOutAckDelayed    =    23\n\r      tcpOutAck           =    27      tcpOutWinUpdate     =     2\n\r      tcpOutUrg           =     2      tcpOutControl       =     8\n\r      tcpOutWinProbe      =     0      tcpOutFastRetrans   =     1\n\r      tcpOutRsts          =     0\n\r      tcpInSegs           =   563      tcpInAckBytes       = 10549\n\r      tcpInAckSegs        =   289      tcpInAckUnsent      =     0\n\r      tcpInDupAck         =    27      tcpInInorderBytes   =   673\n\r      tcpInInorderSegs    =   254      tcpInInorderBytes   =   673\n\r      tcpInUnorderSegs    =     0      tcpInUnorderBytes   =     0\n\r      tcpInDupSegs        =     0      tcpInDupBytes       =     0\n\r      tcpInPartDupSegs    =     0      tcpInPartDupBytes   =     0\n\r      tcpInPastWinSegs    =     0      tcpInPastWinBytes   =     0\n\r      tcpInWinProbe       =     0      tcpInWinUpdate      =   237    \n\r      tcpInClosed         =     0      tcpRttNoUpdate      =    21\n\r      tcpRttUpdate        =   266      tcpTimRetrans       =    26\n\r      tcpTimRetransDrop   =     0      tcpTimKeepalive     =     0\n\r      tcpTimKeepaliveProbe=     0      tcpTimKeepaliveDrop =     0\n\r \n\rIP\n\r \n\r      ipForwarding        =     2      ipDefaultTTL        =   255\n\r      ipInReceives        =  4518      ipInHdrErrors       =     0\n\r      ipInAddrErrors      =     0      ipInCksumErrs       =     0\n\r      ipForwDatagrams     =     0      ipForwProhibits     =     0\n\r      ipInUnknownProtos   =     0      ipInDiscards        =     0\n\r      ipInDelivers        =  4486      ipOutRequests       =  2805\n\r      ipOutDiscards       =     5      ipOutNoRoutes       =     0\n\r      ipReasmTimeout      =    60      ipReasmReqds        =     2\n\r      ipReasmOKs          =     2      ipReasmReqds        =     2\n\r      ipReasmDuplicates   =     0      ipReasmFails        =     0\n\r      ipFragOKs           =    20      ipReasmPartDups     =     0\n\r      ipFragCreates       =   116      ipFragFails         =     0\n\r      tcpInErrs           =     0      ipRoutingDiscards   =     0\n\r      udpInCksumErrs      =     0      udpNoPorts          =    33\n\r      rawipInOverflows    =     0      udpInOverflows      =     6\n\r \n\rICMP\n\r \n\r      icmpInMsgs          =     0      icmpInErrors        =     0\n\r      icmpInCksumErrs     =     0      icmpInUnknowns      =     0\n\r      icmpInDestUnreachs  =     0      icmpInTimeExcds     =     0\n\r      icmpInParmProbs     =     0      icmpInSrcQuenchs    =     0\n\r      icmpInRedirects     =     0      icmpInBadRedirects  =     0\n\r      icmpInEchos         =     0      icmpInEchoReps      =     0\n\r      icmpInTimestamps    =     0      icmpInTimestampReps =     0\n\r      icmpInAddrMasks     =     0      icmpInAddrMaskReps  =     0\n\r      icmpInFragNeeded    =     0      icmpOutMsgs         =     7\n\r      icmpOutDestUnreachs =     1      icmpOutErrors       =     0\n\r      icmpOutDrops        =     5      icmpOutTimeExcds    =     0\n\r      icmpOutParmProbs    =     0      icmpOutSrcQuenchs   =     6\n\r      icmpOutRedirects    =     0      icmpOutEchos        =     0\n\r      icmpOutEchoReps     =     0      icmpOutTimestamps   =     0\n\r      icmpOutTimestampReps=     0      icmpOutAddrMasks    =     0\n\r      icmpOutAddrMaskReps =     0      icmpOutFragNeeded   =     0\n\r      icmpInOverflows     =     0\n\r \n\r \n\rIGMP:\n\r \n\r0 messages received\n\r0 messages received with too few bytes\n\r0 messages received with bad checksum\n\r0 membership queries received\n\r0 membership queries received with invalid field(s)\n\r0 membership reports received\n\r0 membership reports received with invalid field(s)\n\r0 membership reports received for groups to which we belong\n\r0 membership reports sent"
+	return response	
+
 def handle_cmd(cmd, chan, ip,port):
     response = ""
     if cmd.startswith("ls"):
@@ -97,15 +121,30 @@ def handle_cmd(cmd, chan, ip,port):
     if cmd.startswith("ping"):
         response = ping(cmd)
     if cmd.startswith("echo"):
-    	command = cmd
-    	command = command.split()
-    	response = command[1]
+       command = cmd
+       command = command.split()
+       response = command[1]
     if cmd.startswith("cat"):
-    	response = cat(cmd)
+       response = cat(cmd)
     if cmd.startswith("ifconfig"):
-    	response = ifconfig()
+        response = ifconfig()
     if cmd.startswith("ip a"):
-    	response = ipa()
+        response = ipa()
+    if cmd.startswith("uname"):
+        response = uname()
+    if cmd.startswith("whoami"):
+        response = whoami()
+    if cmd.startswith("hostname"):
+        response = hostname()
+    if cmd.startswith("route"):
+        response = route()
+    if cmd.startswith("ps"):
+        response = ps()
+    if cmd.startswith("ps aux"):
+        response = psaux()
+    if cmd.startswith("netstat"):
+        response = netstat()
+
     if response != '':
         logging.info('Response from honeypot ({},{}): '.format(ip,port,response))
         response = response + "\r\n"
@@ -114,37 +153,38 @@ def handle_cmd(cmd, chan, ip,port):
 
 class BasicSshHoneypot(paramiko.ServerInterface):
     client_ip = None
-
-    def __init__(self, client_ip):
+    client_port = None
+    def __init__(self, client_ip,client_port):
         self.client_ip = client_ip
+        self.client_port = client_port
         self.event = threading.Event()
 
     def check_channel_request(self, kind, chanid):
-        logging.info('client called check_channel_request ({}): {}'.format(
-            self.client_ip, kind))
+        logging.info('client called check_channel_request ({},{}): {}'.format(
+            self.client_ip,self.client_port, kind))
         if kind == 'session':
             return paramiko.OPEN_SUCCEEDED
 
     def get_allowed_auths(self, username):
-        logging.info('client called get_allowed_auths ({}) with username {}'.format(
-            self.client_ip, username))
+        logging.info('client called get_allowed_auths ({},{}) with username {}'.format(
+            self.client_ip, self.client_port,username))
         return "publickey,password"
 
     def check_auth_publickey(self, username, key):
         fingerprint = u(hexlify(key.get_fingerprint()))
         logging.info(
-            'client public key ({}): username: {}, key name: {}, md5 fingerprint: {}, base64: {}, bits: {}'.format(
-                self.client_ip, username, key.get_name(), fingerprint, key.get_base64(), key.get_bits()))
+            'client public key ({},{}): username: {}, key name: {}, md5 fingerprint: {}, base64: {}, bits: {}'.format(
+                self.client_ip, self.client_port,username, key.get_name(), fingerprint, key.get_base64(), key.get_bits()))
         return paramiko.AUTH_PARTIALLY_SUCCESSFUL
 
     def check_auth_password(self, username, password):
         # Accept all passwords as valid by default
-        logging.info('new client credentials ({}): username: {}, password: {}'.format(
-            self.client_ip, username, password))
+        logging.info('new client credentials ({},{}): username: {}, password: {}'.format(
+            self.client_ip, self.client_port,username, password))
         if password == "test": #set the needed  password
-        	return paramiko.AUTH_SUCCESSFUL
+            return paramiko.AUTH_SUCCESSFUL
         else:
-        	return paramiko.AUTH_FAILED
+            return paramiko.AUTH_FAILED
 
     def check_channel_shell_request(self, channel):
         self.event.set()
@@ -156,8 +196,8 @@ class BasicSshHoneypot(paramiko.ServerInterface):
     def check_channel_exec_request(self, channel,username, command):
         command_text = str(command.decode("utf-8"))
 
-        logging.info('client sent command via check_channel_exec_request ({}): {}'.format(
-            self.client_ip, username, command))
+        logging.info('client sent command via check_channel_exec_request ({},{}): {}'.format(
+            self.client_ip, self.client_port ,username, command))
         return True
 
 
@@ -170,7 +210,7 @@ def handle_connection(client, addr):
         transport = paramiko.Transport(client)
         transport.add_server_key(HOST_KEY)
         transport.local_version = SSH_BANNER  # Change banner to appear more convincing
-        server = BasicSshHoneypot(client_ip)
+        server = BasicSshHoneypot(client_ip,client_port)
         try:
             transport.start_server(server=server)
 
@@ -211,7 +251,7 @@ def handle_connection(client, addr):
                 command = ""
                 while not command.endswith("\r"):
                     transport = chan.recv(1024)
-                    print(client_ip + "- received:", transport)
+                    print(client_ip + ':'+ str(client_port) +"- received:", transport)
                     # Echo input to psuedo-simulate a basic terminal
                     if (
                             transport != UP_KEY
@@ -231,7 +271,6 @@ def handle_connection(client, addr):
                 if command == "exit" or command == "quit" or command == "logout":
                     #settings.addLogEntry("Connection closed (via exit command): " + client_ip + "\n")
                     run = False
-
                 else:
                     handle_cmd(command, chan, client_ip,client_port)
 
