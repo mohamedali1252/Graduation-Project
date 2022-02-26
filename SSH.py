@@ -27,10 +27,12 @@ LEFT_KEY = '\x1b[D'.encode()
 BACK_KEY = '\x7f'.encode()
 
 logging.basicConfig( #to provide the logging info that we recieve from the attacker
+    filename="/home/kali/SSH-Honeypot/ssh_honeypot.log",
+    filemode='a',
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO,
-    filename='ssh_honeypot.log')
+    level=logging.DEBUG)
 
+logger=logging.getLogger()
 
 def ping(command):
 	cmd = command
@@ -146,7 +148,7 @@ def handle_cmd(cmd, chan, ip,port):
         response = netstat()
 
     if response != '':
-        logging.info('Response from honeypot ({},{}): '.format(ip,port,response))
+        logger.info('Response from honeypot ({},{}): '.format(ip,port,response))
         response = response + "\r\n"
     chan.send(response)
 
@@ -160,28 +162,28 @@ class BasicSshHoneypot(paramiko.ServerInterface):
         self.event = threading.Event()
 
     def check_channel_request(self, kind, chanid):
-        logging.info('client called check_channel_request ({},{}): {}'.format(
+        logger.info('client called check_channel_request ({},{}): {}'.format(
             self.client_ip,self.client_port, kind))
         if kind == 'session':
             return paramiko.OPEN_SUCCEEDED
 
     def get_allowed_auths(self, username):
-        logging.info('client called get_allowed_auths ({},{}) with username {}'.format(
+        logger.info('client called get_allowed_auths ({},{}) with username {}'.format(
             self.client_ip, self.client_port,username))
         return "publickey,password"
 
     def check_auth_publickey(self, username, key):
         fingerprint = u(hexlify(key.get_fingerprint()))
-        logging.info(
+        logger.info(
             'client public key ({},{}): username: {}, key name: {}, md5 fingerprint: {}, base64: {}, bits: {}'.format(
                 self.client_ip, self.client_port,username, key.get_name(), fingerprint, key.get_base64(), key.get_bits()))
         return paramiko.AUTH_PARTIALLY_SUCCESSFUL
 
     def check_auth_password(self, username, password):
         # Accept all passwords as valid by default
-        logging.info('new client credentials ({},{}): username: {}, password: {}'.format(
+        logger.info('new client credentials ({},{}): username: {}, password: {}'.format(
             self.client_ip, self.client_port,username, password))
-        if password == "test": #set the needed  password
+        if str(password) == "test": #set the needed  password
             return paramiko.AUTH_SUCCESSFUL
         else:
             return paramiko.AUTH_FAILED
@@ -196,7 +198,7 @@ class BasicSshHoneypot(paramiko.ServerInterface):
     def check_channel_exec_request(self, channel,username, command):
         command_text = str(command.decode("utf-8"))
 
-        logging.info('client sent command via check_channel_exec_request ({},{}): {}'.format(
+        logger.info('client sent command via check_channel_exec_request ({},{}): {}'.format(
             self.client_ip, self.client_port ,username, command))
         return True
 
@@ -204,7 +206,12 @@ class BasicSshHoneypot(paramiko.ServerInterface):
 def handle_connection(client, addr):
     client_ip = addr[0]
     client_port = addr[1]
-    logging.info('New connection from: {}, port : {}'.format(client_ip,client_port))
+    #at release
+    protocol_type = "tcp"
+    service_type = "ssh"
+    start = time.time()
+    ##########start = now()
+    logger.info('New connection from: {}, port : {}'.format(client_ip,client_port))
 
     try:
         transport = paramiko.Transport(client)
@@ -224,25 +231,24 @@ def handle_connection(client, addr):
             print('*** No channel (from ' + client_ip+' , '+ client_port + ').')
             raise Exception("No channel")
 
-        chan.settimeout(20) #time to end the ssh connection if there is no interaction
+        chan.settimeout(10) #time to end the ssh connection if there is no interaction
 
         if transport.remote_mac != '':
-            logging.info('Client mac ({},{}): {}'.format(client_ip,client_port ,transport.remote_mac))
+            logger.info('Client mac ({},{}): {}'.format(client_ip,client_port ,transport.remote_mac))
 
         if transport.remote_compression != '':
-            logging.info('Client compression ({},{}): {}'.format(client_ip, client_port,transport.remote_compression))
+            logger.info('Client compression ({},{}): {}'.format(client_ip, client_port,transport.remote_compression))
 
         if transport.remote_version != '':
-            logging.info('Client SSH version ({},{}): {}'.format(client_ip, client_port, transport.remote_version))
+            logger.info('Client SSH version ({},{}): {}'.format(client_ip, client_port, transport.remote_version))
 
         if transport.remote_cipher != '':
-            logging.info('Client SSH cipher ({},{}): {}'.format(client_ip, client_port,transport.remote_cipher))
+            logger.info('Client SSH cipher ({},{}): {}'.format(client_ip, client_port,transport.remote_cipher))
 
         server.event.wait(10)
         if not server.event.is_set():
-            logging.info('** Client ({},{}): never asked for a shell'.format(client_ip,client_port))
+            logger.info('** Client ({},{}): never asked for a shell'.format(client_ip,client_port))
             raise Exception("No shell request")
-
         try:
             chan.send("Welcome to Ubuntu 18.04.4 LTS (GNU/Linux 4.15.0-128-generic x86_64)\r\n\r\n")
             run = True
@@ -265,7 +271,7 @@ def handle_connection(client, addr):
 
                 chan.send("\r\n")
                 command = command.rstrip()
-                logging.info('Command receied ({},{}): {}'.format(client_ip, client_port,command))
+                logger.info('Command receied ({},{}): {}'.format(client_ip, client_port,command))
                 #detect_url(command, client_ip)
 
                 if command == "exit" or command == "quit" or command == "logout":
@@ -273,8 +279,11 @@ def handle_connection(client, addr):
                     run = False
                 else:
                     handle_cmd(command, chan, client_ip,client_port)
-
         except Exception as err:
+            end = time.time()
+            ##########end = now()
+            noooo = end - start
+            logger.info('connection closed from: {}, port : {} , time: {},protocol_type: {},service_type: {}'.format(client_ip,client_port,noooo,protocol_type,service_type))
             print('!!! Exception: {}: {}'.format(err.__class__, err))
             try:
                 transport.close()
@@ -327,3 +336,4 @@ if __name__ == "__main__":
                         action="store")
     args = parser.parse_args()
     start_server(args.port, args.bind)
+    
