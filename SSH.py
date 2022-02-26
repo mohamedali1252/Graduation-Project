@@ -206,12 +206,18 @@ class BasicSshHoneypot(paramiko.ServerInterface):
 def handle_connection(client, addr):
     client_ip = addr[0]
     client_port = addr[1]
+    ##############################
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    local_ip = s.getsockname()[0]
+    s.close()
+    ############################
     #at release
     protocol_type = "tcp"
     service_type = "ssh"
     start = time.time()
     ##########start = now()
-    logger.info('New connection from: {}, port : {}'.format(client_ip,client_port))
+    logger.info('New connection from: {}, port : {},to: {}'.format(client_ip,client_port,local_ip))
 
     try:
         transport = paramiko.Transport(client)
