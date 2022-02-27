@@ -34,6 +34,8 @@ logging.basicConfig( #to provide the logging info that we recieve from the attac
 
 logger=logging.getLogger()
 
+ 
+
 def ping(command):
 	cmd = command
 	#response=""
@@ -146,6 +148,14 @@ def handle_cmd(cmd, chan, ip,port):
         response = psaux()
     if cmd.startswith("netstat"):
         response = netstat()
+    
+    #############################
+    if cmd.startswith("su root"):
+        #input="passward:"  
+        #cmd.recv("passward:")
+        response = "su: Authentication failure"
+     
+
 
     if response != '':
         logger.info('Response from honeypot ({},{}): '.format(ip,port,response))
@@ -209,9 +219,10 @@ def handle_connection(client, addr,port):
     client_ip = addr[0]
     client_port = addr[1]
     logged_in = 0
+    su_attempted = 0 
     ##############################
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
+    s.connect(("127.0.0.1", 2222))
     local_ip = s.getsockname()[0]
     s.close()
     ############################
@@ -291,12 +302,22 @@ def handle_connection(client, addr,port):
                     #settings.addLogEntry("Connection closed (via exit command): " + client_ip + "\n")
                     run = False
                 else:
+                ###############
+                    if command == "su root":
+                        su_attempted = 1
+                        chan.send("passward:")
+                        passward = ""
+                        while not passward.endswith("\r"):
+                            recivedpass = chan.recv(1024)
+                            passward += recivedpass.decode("utf-8")   
+                        chan.send("\r\n")
+                ###############
                     handle_cmd(command, chan, client_ip,client_port)
         except Exception as err:
             end = time.time()
             ##########end = now()
             noooo = end - start
-            logger.info('connection closed from: {}, port : {} , time: {},protocol_type: {},service_type: {},logged_in:{}'.format(client_ip,client_port,noooo,protocol_type,service_type,str(logged_in)))
+            logger.info('connection closed from: {}, port : {} , time: {},protocol_type: {},service_type: {},logged_in:{}, su_attempted:{}'.format(client_ip,client_port,noooo,protocol_type,service_type,str(logged_in),str(su_attempted)))
             print('!!! Exception: {}: {}'.format(err.__class__, err))
             try:
                 transport.close()
