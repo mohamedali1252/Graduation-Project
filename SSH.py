@@ -170,7 +170,8 @@ class BasicSshHoneypot(paramiko.ServerInterface):
     def get_allowed_auths(self, username):
         logger.info('client called get_allowed_auths ({},{}) with username {}'.format(
             self.client_ip, self.client_port,username))
-        return "publickey,password"
+        test = "publickey,password"
+        return test
 
     def check_auth_publickey(self, username, key):
         fingerprint = u(hexlify(key.get_fingerprint()))
@@ -187,6 +188,7 @@ class BasicSshHoneypot(paramiko.ServerInterface):
             return paramiko.AUTH_SUCCESSFUL
         else:
             return paramiko.AUTH_FAILED
+            
 
     def check_channel_shell_request(self, channel):
         self.event.set()
@@ -203,9 +205,10 @@ class BasicSshHoneypot(paramiko.ServerInterface):
         return True
 
 
-def handle_connection(client, addr):
+def handle_connection(client, addr,port):
     client_ip = addr[0]
     client_port = addr[1]
+    logged_in = 0
     ##############################
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
@@ -217,8 +220,11 @@ def handle_connection(client, addr):
     service_type = "ssh"
     start = time.time()
     ##########start = now()
-    logger.info('New connection from: {}, port : {},to: {}'.format(client_ip,client_port,local_ip))
-
+    land = 0
+    if client_ip == local_ip or client_ip == "127.0.0.1" or client_ip == "127.0.0.2" :
+    	if client_port == "2222" or client_port == port:
+    		land = 1
+    logger.info('New connection from: {}, port : {},to: {},land: {}'.format(client_ip,client_port,local_ip,str(land)))
     try:
         transport = paramiko.Transport(client)
         transport.add_server_key(HOST_KEY)
@@ -256,6 +262,7 @@ def handle_connection(client, addr):
             logger.info('** Client ({},{}): never asked for a shell'.format(client_ip,client_port))
             raise Exception("No shell request")
         try:
+            logged_in = 1
             chan.send("Welcome to Ubuntu 18.04.4 LTS (GNU/Linux 4.15.0-128-generic x86_64)\r\n\r\n")
             run = True
             while run:
@@ -289,7 +296,7 @@ def handle_connection(client, addr):
             end = time.time()
             ##########end = now()
             noooo = end - start
-            logger.info('connection closed from: {}, port : {} , time: {},protocol_type: {},service_type: {}'.format(client_ip,client_port,noooo,protocol_type,service_type))
+            logger.info('connection closed from: {}, port : {} , time: {},protocol_type: {},service_type: {},logged_in:{}'.format(client_ip,client_port,noooo,protocol_type,service_type,str(logged_in)))
             print('!!! Exception: {}: {}'.format(err.__class__, err))
             try:
                 transport.close()
@@ -326,7 +333,7 @@ def start_server(port, bind):
         except Exception as err:
             print('*** Listen/accept failed: {}'.format(err))
             traceback.print_exc()
-        new_thread = threading.Thread(target=handle_connection, args=(client, addr))
+        new_thread = threading.Thread(target=handle_connection, args=(client, addr,port))
         new_thread.start()
         threads.append(new_thread)
 
