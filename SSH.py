@@ -80,7 +80,7 @@ def cat(command) :
 		b = open(s,"r")
 		content = b.read()
 		response = content
-	else:
+	else: 
 		response = "File not found"
 	return response
 	
@@ -115,6 +115,9 @@ def psaux():
 def netstat():
 	response = "UDP\n\r \n\r      udpInDatagrams      =  39228     udpOutDatagrams     =  2455\n\r       udpInErrors         =     0\n\r \n\rTCP\n\r \n\r      tcpRtoAlgorithm     =     4      tcpMaxConn          =    -1\n\r      tcpRtoMax           = 60000      tcpPassiveOpens     =     2\n\r      tcpActiveOpens      =     4      tcpEstabResets      =     1\n\r      tcpAttemptFails     =     3      tcpOutSegs          =   315\n\r      tcpCurrEstab        =     1      tcpOutDataBytes     = 10547\n\r     tcpOutDataSegs      =   288      tcpRetransBytes     =  8376\n\r      tcpRetransSegs      =    29      tcpOutAckDelayed    =    23\n\r      tcpOutAck           =    27      tcpOutWinUpdate     =     2\n\r      tcpOutUrg           =     2      tcpOutControl       =     8\n\r      tcpOutWinProbe      =     0      tcpOutFastRetrans   =     1\n\r      tcpOutRsts          =     0\n\r      tcpInSegs           =   563      tcpInAckBytes       = 10549\n\r      tcpInAckSegs        =   289      tcpInAckUnsent      =     0\n\r      tcpInDupAck         =    27      tcpInInorderBytes   =   673\n\r      tcpInInorderSegs    =   254      tcpInInorderBytes   =   673\n\r      tcpInUnorderSegs    =     0      tcpInUnorderBytes   =     0\n\r      tcpInDupSegs        =     0      tcpInDupBytes       =     0\n\r      tcpInPartDupSegs    =     0      tcpInPartDupBytes   =     0\n\r      tcpInPastWinSegs    =     0      tcpInPastWinBytes   =     0\n\r      tcpInWinProbe       =     0      tcpInWinUpdate      =   237    \n\r      tcpInClosed         =     0      tcpRttNoUpdate      =    21\n\r      tcpRttUpdate        =   266      tcpTimRetrans       =    26\n\r      tcpTimRetransDrop   =     0      tcpTimKeepalive     =     0\n\r      tcpTimKeepaliveProbe=     0      tcpTimKeepaliveDrop =     0\n\r \n\rIP\n\r \n\r      ipForwarding        =     2      ipDefaultTTL        =   255\n\r      ipInReceives        =  4518      ipInHdrErrors       =     0\n\r      ipInAddrErrors      =     0      ipInCksumErrs       =     0\n\r      ipForwDatagrams     =     0      ipForwProhibits     =     0\n\r      ipInUnknownProtos   =     0      ipInDiscards        =     0\n\r      ipInDelivers        =  4486      ipOutRequests       =  2805\n\r      ipOutDiscards       =     5      ipOutNoRoutes       =     0\n\r      ipReasmTimeout      =    60      ipReasmReqds        =     2\n\r      ipReasmOKs          =     2      ipReasmReqds        =     2\n\r      ipReasmDuplicates   =     0      ipReasmFails        =     0\n\r      ipFragOKs           =    20      ipReasmPartDups     =     0\n\r      ipFragCreates       =   116      ipFragFails         =     0\n\r      tcpInErrs           =     0      ipRoutingDiscards   =     0\n\r      udpInCksumErrs      =     0      udpNoPorts          =    33\n\r      rawipInOverflows    =     0      udpInOverflows      =     6\n\r \n\rICMP\n\r \n\r      icmpInMsgs          =     0      icmpInErrors        =     0\n\r      icmpInCksumErrs     =     0      icmpInUnknowns      =     0\n\r      icmpInDestUnreachs  =     0      icmpInTimeExcds     =     0\n\r      icmpInParmProbs     =     0      icmpInSrcQuenchs    =     0\n\r      icmpInRedirects     =     0      icmpInBadRedirects  =     0\n\r      icmpInEchos         =     0      icmpInEchoReps      =     0\n\r      icmpInTimestamps    =     0      icmpInTimestampReps =     0\n\r      icmpInAddrMasks     =     0      icmpInAddrMaskReps  =     0\n\r      icmpInFragNeeded    =     0      icmpOutMsgs         =     7\n\r      icmpOutDestUnreachs =     1      icmpOutErrors       =     0\n\r      icmpOutDrops        =     5      icmpOutTimeExcds    =     0\n\r      icmpOutParmProbs    =     0      icmpOutSrcQuenchs   =     6\n\r      icmpOutRedirects    =     0      icmpOutEchos        =     0\n\r      icmpOutEchoReps     =     0      icmpOutTimestamps   =     0\n\r      icmpOutTimestampReps=     0      icmpOutAddrMasks    =     0\n\r      icmpOutAddrMaskReps =     0      icmpOutFragNeeded   =     0\n\r      icmpInOverflows     =     0\n\r \n\r \n\rIGMP:\n\r \n\r0 messages received\n\r0 messages received with too few bytes\n\r0 messages received with bad checksum\n\r0 membership queries received\n\r0 membership queries received with invalid field(s)\n\r0 membership reports received\n\r0 membership reports received with invalid field(s)\n\r0 membership reports received for groups to which we belong\n\r0 membership reports sent"
 	return response	
+
+
+
 
 def handle_cmd(cmd, chan, ip,port):
     response = ""
@@ -151,9 +154,11 @@ def handle_cmd(cmd, chan, ip,port):
     
     #############################
     if cmd.startswith("su root"):
-        #input="passward:"  
-        #cmd.recv("passward:")
         response = "su: Authentication failure"
+    if cmd.startswith(">"):
+        response = "\n\r"
+    if cmd.startswith("touch"):
+        response = "\r\n"
      
 
 
@@ -220,6 +225,7 @@ def handle_connection(client, addr,port):
     client_port = addr[1]
     logged_in = 0
     su_attempted = 0 
+    Num_file_creations = 0
     ##############################
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("127.0.0.1", 2222))
@@ -235,6 +241,7 @@ def handle_connection(client, addr,port):
     if client_ip == local_ip or client_ip == "127.0.0.1" or client_ip == "127.0.0.2" :
     	if client_port == "2222" or client_port == port:
     		land = 1
+    
     logger.info('New connection from: {}, port : {},to: {},land: {}'.format(client_ip,client_port,local_ip,str(land)))
     try:
         transport = paramiko.Transport(client)
@@ -311,13 +318,25 @@ def handle_connection(client, addr,port):
                             recivedpass = chan.recv(1024)
                             passward += recivedpass.decode("utf-8")   
                         chan.send("\r\n")
+                    if command.startswith(">") or command.startswith("touch") or command.startswith("cat >"):
+                        Num_file_creations = Num_file_creations + 1
+                        if command.startswith(">"):
+                            chan.send("to end type exit \n\r")
+                            txt =""
+                            while not txt.endswith("exit"):
+                                recivedtxt = chan.recv(1024)
+                             
+                                chan.send(txt)
+                                txt += recivedtxt.decode("utf-8")   
+                                if recivedtxt == "\r\n" :
+                                	chan.send("\r\n")
                 ###############
                     handle_cmd(command, chan, client_ip,client_port)
         except Exception as err:
             end = time.time()
             ##########end = now()
             noooo = end - start
-            logger.info('connection closed from: {}, port : {} , time: {},protocol_type: {},service_type: {},logged_in:{}, su_attempted:{}'.format(client_ip,client_port,noooo,protocol_type,service_type,str(logged_in),str(su_attempted)))
+            logger.info('connection closed from: {}, port : {} , time: {},protocol_type: {},service_type: {},logged_in:{}, su_attempted:{}, Num_file_creations: {}'.format(client_ip,client_port,noooo,protocol_type,service_type,str(logged_in),str(su_attempted),str(Num_file_creations)))
             print('!!! Exception: {}: {}'.format(err.__class__, err))
             try:
                 transport.close()
