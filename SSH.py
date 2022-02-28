@@ -156,10 +156,11 @@ def handle_cmd(cmd, chan, ip,port):
     if cmd.startswith("su root"):
         response = "su: Authentication failure"
     if cmd.startswith(">"):
-        response = "\n\r"
+        response = ""
     if cmd.startswith("touch"):
-        response = "\r\n"
-     
+        response = ""
+    if cmd.startswith("echo"):
+        response = ""
 
 
     if response != '':
@@ -226,6 +227,7 @@ def handle_connection(client, addr,port):
     logged_in = 0
     su_attempted = 0 
     Num_file_creations = 0
+    Root_shell = 1
     ##############################
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("127.0.0.1", 2222))
@@ -281,6 +283,7 @@ def handle_connection(client, addr,port):
             raise Exception("No shell request")
         try:
             logged_in = 1
+            Root_shell = 0
             chan.send("Welcome to Ubuntu 18.04.4 LTS (GNU/Linux 4.15.0-128-generic x86_64)\r\n\r\n")
             run = True
             while run:
@@ -318,25 +321,31 @@ def handle_connection(client, addr,port):
                             recivedpass = chan.recv(1024)
                             passward += recivedpass.decode("utf-8")   
                         chan.send("\r\n")
-                    if command.startswith(">") or command.startswith("touch") or command.startswith("cat >"):
+                    if command.startswith(">") or command.startswith("touch") or command.startswith("cat >") or command.startswith("echo"):
                         Num_file_creations = Num_file_creations + 1
                         if command.startswith(">"):
-                            chan.send("to end type exit \n\r")
                             txt =""
-                            while not txt.endswith("exit"):
+                            txt1 =""
+                            while not txt1.endswith('\x03'):
                                 recivedtxt = chan.recv(1024)
-                             
-                                chan.send(txt)
-                                txt += recivedtxt.decode("utf-8")   
-                                if recivedtxt == "\r\n" :
-                                	chan.send("\r\n")
-                ###############
+                                if recivedtxt.decode("utf-8")=="\r" :
+                                    txt = "\r\n"
+                                else:
+                                    txt = recivedtxt.decode("utf-8")
+                                chan.send(txt)    
+                                txt1 += recivedtxt.decode("utf-8")
+                                
+                                     
+                               
+                               
+                            
                     handle_cmd(command, chan, client_ip,client_port)
+
         except Exception as err:
             end = time.time()
             ##########end = now()
             noooo = end - start
-            logger.info('connection closed from: {}, port : {} , time: {},protocol_type: {},service_type: {},logged_in:{}, su_attempted:{}, Num_file_creations: {}'.format(client_ip,client_port,noooo,protocol_type,service_type,str(logged_in),str(su_attempted),str(Num_file_creations)))
+            logger.info('connection closed from: {}, port : {} , time: {},protocol_type: {},service_type: {},logged_in:{}, su_attempted:{}, Num_file_creations: {},Root_shell: {}'.format(client_ip,client_port,noooo,protocol_type,service_type,str(logged_in),str(su_attempted),str(Num_file_creations),str(Root_shell)))
             print('!!! Exception: {}: {}'.format(err.__class__, err))
             try:
                 transport.close()
