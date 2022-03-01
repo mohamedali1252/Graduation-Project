@@ -1,11 +1,9 @@
-from multiprocessing import connection
-from turtle import screensize
+
 import scapy.all as scapy
-import binascii
 
 
-from scapy.config import conf
-conf.use_pcap = True
+
+
 
 
 
