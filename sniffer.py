@@ -60,7 +60,7 @@ def fun(p):
         else:
          #cal src_Bytes
          
-          if p[scapy.IP].src == b'192.168.56.1' and p[scapy.IP].sport == 22 :
+          if p[scapy.IP].src == '192.168.56.1' and p[scapy.IP].sport == 22 :
               print('da5al')
               id  = str(dst_ip) + ':' + str(dst_port)
               connection_id[id][4] += len(p['TCP'].payload)
