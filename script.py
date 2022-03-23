@@ -19,7 +19,6 @@ def all_the_work():
 		for counter in range(0,connections_count):
 			line1 = connections[counter]
 			sep_conn = line1.split(",")
-			#print(sep_conn)
 			conn_no1 = sep_conn[0]
 			duration1s = sep_conn[1]
 			orig_p1 = int(sep_conn[2])
