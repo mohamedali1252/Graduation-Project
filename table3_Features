@@ -1,0 +1,229 @@
+from time import strftime
+import os
+import time
+import datetime
+
+#table 3 Features
+Count            =   []
+Srv_count        =   []
+Serror_rate      =   []
+Srv_serror_rate  =   []
+Rerror_rate      =   []
+Srv_rerror_rate  =   []
+Same_srv_rate    =   []
+Diff_srv_rate    =   []
+Srv_diff_host_rate = []
+Dst_host_count     = []
+Dst_host_srv_count = []
+Dst_host_same_srv_rate = []
+Dst_host_diff_srv_rate = []
+Dst_host_same_src_port_rate = []
+Dst_host_srv_diff_host_rate = []
+Dst_host_serror_rate   = []
+Dst_host_srv_serror_rate = []
+Dst_host_rerror_rate = []
+Dst_host_srv_rerror_rate = []
+
+
+
+
+
+
+      
+def time_insec(epoch_time):
+    t  = time.localtime(epoch_time)
+    con_srtime = int(t.tm_sec) + float(t.tm_min) * 60
+    return con_srtime
+
+
+con_array = []
+
+f = open("con1.log", "r")
+for line in f:
+    con_array.append(line.split())
+
+    
+#test
+
+for index,con in enumerate(con_array):
+    print('con index',index,'time',time.localtime(float(con[0])),time_insec(float(con[0])),con[2])
+
+#file order connections by their end time so first con is 1st one to end
+first_con_strtime=time_insec(float(con_array[0][0]))
+
+print("firstt con_start_time = ",first_con_strtime)
+print("||||||||||||||||||||\|||||||")
+
+for index,con in enumerate(con_array):
+        print('index',index+1)
+        print("connection to check on >>",con)
+    
+        temp_count              = 0
+        temp_srv_count          = 0
+        temp_Serror_rate        = 0
+        temp_srv_Serror_rate    = 0
+        temp_Rerror_rate        = 0
+        temp_Srv_rerror_rate    = 0
+        temp_Srv_diff_host_rate = 0
+        #starting from 32
+        temp_Dst_host_count     = 0
+        temp_Dst_host_srv_count = 0
+        temp_Dst_host_same_srv_rate = 0
+        temp_Dst_host_diff_srv_rate = 0
+        temp_Dst_host_same_src_port_rate = 0
+        temp_Dst_host_srv_diff_host_rate = 0
+        temp_Dst_host_serror_rate   = 0
+        temp_Dst_host_srv_serror_rate = 0
+        temp_Dst_host_rerror_rate = 0
+        temp_Dst_host_srv_rerror_rate = 0
+
+    
+        for con2 in con_array:
+            if con2 == con:
+                pass 
+            else:
+             if ((time_insec(float(con[0]))- time_insec(float(con2[0]) ) ) <= 180.0 ) & ((time_insec(float(con[0]))- time_insec(float(con2[0]) ) ) >= 0):
+                #if same src & same dst(not sure)
+                if  con[2] == con2[2]  :
+
+                     print("matched con->",time.localtime(float(con2[0])).tm_min)
+                     print(time_insec(float(con[0]))- time_insec(float(con2[0]) ) )
+                     temp_count += 1
+                     #25_Serror_rate
+                     if con2[11] == 'S0' | 'S1' | 'S2' | 'S3':
+                         temp_Serror_rate +=1
+                     #27_Rerror_rate
+                     if con2[11] == 'REJ':
+                        temp_Rerror_rate +=1
+                    
+                     
+                 #srv: if same src & same dst port 
+                if((con[2] == con2[2]) & (con[5] == con2[5]) ):
+                      temp_srv_count += 1
+                      #26_srv_Serror_rate
+                      if con2[11] == 'S0' | 'S1' | 'S2' | 'S3':
+                         temp_srv_Serror_rate +=1
+                      #28_srv_Rerror_rate
+                      if con2[11] == 'REJ':
+                         temp_Srv_rerror_rate +=1
+                      #31_Srv_diff_host_rate
+                      if con[4] != con2[4]:
+                          temp_Srv_diff_host_rate +=1
+                        
+                #Features starting from 32:  same dst
+                if con[4] == con2[4]:
+                    #32
+                    temp_Dst_host_count += 1
+                    #34 Dst_host_same _srv_rate
+                    if con[5] == con2[5] :
+                        temp_Dst_host_same_srv_rate += 1 
+                    #38
+                    if con2[11] == 'S0' | 'S1' | 'S2' | 'S3':
+                        temp_Dst_host_serror_rate +=1
+
+                    if con2[11] == 'REJ':
+                        temp_Dst_host_rerror_rate +=1
+
+                #33 same dst port only
+                if con[5] == con2[5] :
+                    temp_Dst_host_srv_count +=1
+                    #36
+                    if con[3] == con2[3]:
+                       temp_Dst_host_same_src_port_rate +=1
+                    #37
+                    if con[4] == con2[4]:
+                        temp_Dst_host_srv_diff_host_rate +=1
+                    #39
+                    if con2[11] == 'S0' | 'S1' | 'S2' | 'S3':
+                        temp_Dst_host_srv_serror_rate +=1
+                    #41
+                    if con2[11] == 'REJ':
+                        temp_Dst_host_srv_rerror_rate +=1
+
+                
+
+
+
+
+
+
+
+            
+        Count.append(temp_count)
+        if temp_count != 0:
+             Serror_rate.append(float(temp_Serror_rate)/temp_count)
+             Rerror_rate.append(float(temp_Rerror_rate)/ temp_count)
+             #29
+             Same_srv_rate.append(float(temp_srv_count)/temp_count)
+             #30
+             Diff_srv_rate.append(1- (float(temp_srv_count)/temp_count) )
+             
+        else:
+            Serror_rate.append(float(0))
+            Same_srv_rate.append(float(0))
+            Rerror_rate.append(float(0))
+            Diff_srv_rate.append(float(0))
+
+        Srv_count.append(temp_srv_count)
+        if temp_srv_count != 0:
+            Srv_serror_rate.append((float(temp_srv_count)/temp_srv_count))
+            Srv_rerror_rate.append(float(temp_Rerror_rate)/ temp_srv_count)
+            Srv_diff_host_rate.append(float(temp_Srv_diff_host_rate)/temp_srv_count)
+        else:
+             Srv_serror_rate.append(float(0))
+             Srv_rerror_rate.append(float(0))
+             Srv_diff_host_rate.append(float(0))
+
+    # from 32 yarab n5las 34an 2rft
+
+        Dst_host_count.append(temp_Dst_host_count)
+        Dst_host_srv_count.append(temp_Dst_host_srv_count)
+        Dst_host_same_srv_rate.append(temp_Dst_host_same_srv_rate)
+        if temp_Dst_host_count != 0:
+             Dst_host_same_srv_rate.append(float(temp_Dst_host_same_srv_rate)/temp_Dst_host_count)
+             Dst_host_diff_srv_rate.append(1-(float(temp_Dst_host_same_srv_rate)/temp_Dst_host_count))
+             Dst_host_rerror_rate.append(float(temp_Dst_host_rerror_rate)/temp_Dst_host_count)
+             Dst_host_serror_rate.append(float(temp_Dst_host_serror_rate)/temp_Dst_host_count)
+        else:
+             Dst_host_same_srv_rate.append(0)
+             Dst_host_diff_srv_rate.append(0)
+             Dst_host_rerror_rate.append(0)
+             Dst_host_serror_rate.append(0)
+
+
+        if temp_Dst_host_srv_count != 0:
+
+            Dst_host_same_src_port_rate.append(float(temp_Dst_host_same_src_port_rate)/temp_Dst_host_srv_count)
+            Dst_host_srv_diff_host_rate.append(float(temp_Dst_host_srv_diff_host_rate)/temp_Dst_host_srv_count)
+            Dst_host_srv_rerror_rate.append(float(temp_Dst_host_srv_rerror_rate)/temp_Dst_host_srv_count)
+            Dst_host_srv_serror_rate.append(float(temp_Dst_host_srv_serror_rate)/temp_Dst_host_srv_count)
+            Dst_host_same_src_port_rate.append(float(temp_Dst_host_same_src_port_rate)/temp_Dst_host_srv_count)
+        else:
+             Dst_host_same_src_port_rate.append(0)
+             Dst_host_srv_diff_host_rate.append(0)
+             Dst_host_srv_rerror_rate.append(0)
+             Dst_host_srv_serror_rate.append(0)
+             Dst_host_same_src_port_rate.append(0)
+       
+        
+        
+        
+        
+               
+ 
+
+
+print(Count)
+print(Srv_count)
+        
+
+        
+        
+
+  
+
+
+
+    
+    
+
