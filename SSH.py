@@ -384,7 +384,7 @@ def handle_connection(client, addr, port):
                 	
                 	
                 	logger_2.info(
-                        '[date time]:{},src_ip:{},src_port:{},dst_ip:{},dst_port:{},hot:{},num_failed_login:{},logged_in:{},num_compromised_file:{},root_shell:{},su_attempted:{},num_root:{},num_file_creations:{},num_shells:{},num_access_files:{},num_outbound_cmds:{},is_hot_login :{},is_guest_login: {}'.format(
+                         '{} {} {} {} {},{},{},{},{},{},{},{},{},{},{},{},{},{}'.format(
                             str(date_time), str(src_ip), str(src_port), str(dst_ip), str(dst_port), str(hot),
                             str(num_failed_login), str(logged_in), str(num_compromised_file), str(root_shell),
                             str(su_attempted), str(num_root), str(num_file_creations), str(num_shells),
@@ -436,7 +436,7 @@ def handle_connection(client, addr, port):
                     client_ip, client_port, duration, protocol_type, service_type, str(logged_in), str(su_attempted),
                     str(num_file_creations), str(root_shell)))
             logger_2.info(
-                        '[date time]:{},src_ip:{},src_port:{},dst_ip:{},dst_port:{},hot:{},num_failed_login:{},logged_in:{},num_compromised_file:{},root_shell:{},su_attempted:{},num_root:{},num_file_creations:{},num_shells:{},num_access_files:{},num_outbound_cmds:{},is_hot_login :{},is_guest_login: {}'.format(
+                        '{} {} {} {} {},{},{},{},{},{},{},{},{},{},{},{},{},{}'.format(
                             str(date_time), str(src_ip), str(src_port), str(dst_ip), str(dst_port), str(hot),
                             str(num_failed_login), str(logged_in), str(num_compromised_file), str(root_shell),
                             str(su_attempted), str(num_root), str(num_file_creations), str(num_shells),
