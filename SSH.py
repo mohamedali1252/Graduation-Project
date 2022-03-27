@@ -428,7 +428,7 @@ def handle_connection(client, addr, port):
             end = time.time()
             ##########end = now()
             duration = end - start
-            date_time = float(start) + 6 * 60 * 60 + float(duration)
+            date_time = float(start) + 6 * 60 * 60
             date_time = time.localtime(date_time)
             date_time = time.strftime("[%d/%b/%Y %H:%M:%S]", date_time)
             logger.info(
