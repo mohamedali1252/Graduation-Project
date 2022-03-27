@@ -90,7 +90,7 @@ for index,con in enumerate(con_array):
                      print(time_insec(float(con[0]))- time_insec(float(con2[0]) ) )
                      temp_count += 1
                      #25_Serror_rate
-                     if con2[11] == 'S0' | 'S1' | 'S2' | 'S3':
+                     if con2[11] in ('S0','S1','S2','S3'):
                          temp_Serror_rate +=1
                      #27_Rerror_rate
                      if con2[11] == 'REJ':
@@ -101,7 +101,7 @@ for index,con in enumerate(con_array):
                 if((con[2] == con2[2]) & (con[5] == con2[5]) ):
                       temp_srv_count += 1
                       #26_srv_Serror_rate
-                      if con2[11] == 'S0' | 'S1' | 'S2' | 'S3':
+                      if  con2[11] in ('S0','S1','S2','S3'):
                          temp_srv_Serror_rate +=1
                       #28_srv_Rerror_rate
                       if con2[11] == 'REJ':
@@ -118,7 +118,7 @@ for index,con in enumerate(con_array):
                     if con[5] == con2[5] :
                         temp_Dst_host_same_srv_rate += 1 
                     #38
-                    if con2[11] == 'S0' | 'S1' | 'S2' | 'S3':
+                    if con2[11] in ('S0','S1','S2','S3'):
                         temp_Dst_host_serror_rate +=1
 
                     if con2[11] == 'REJ':
@@ -134,7 +134,7 @@ for index,con in enumerate(con_array):
                     if con[4] == con2[4]:
                         temp_Dst_host_srv_diff_host_rate +=1
                     #39
-                    if con2[11] == 'S0' | 'S1' | 'S2' | 'S3':
+                    if con2[11] in ('S0','S1','S2','S3'):
                         temp_Dst_host_srv_serror_rate +=1
                     #41
                     if con2[11] == 'REJ':
