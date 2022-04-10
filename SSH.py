@@ -50,11 +50,6 @@ setup_logger('log2', "feature.log")
 logger_2 = logging.getLogger('log2')
 
 
-
-
-
-
-
 def ping(command):
     cmd = command
     # response=""
@@ -198,13 +193,13 @@ def handle_cmd(cmd, chan, ip, port):
 class BasicSshHoneypot(paramiko.ServerInterface):
     client_ip = None
     client_port = None
-    a_username = None
+    a_username = ""  # i use it to transfer the username to handel connetion function > by using server.a_username
+    num_failed = 0  # i use to transfer it to handel connetion function > by using server.num_faild
 
     def __init__(self, client_ip, client_port):
         self.client_ip = client_ip
         self.client_port = client_port
         self.event = threading.Event()
-        
 
     def check_channel_request(self, kind, chanid):
         logger.info('client called check_channel_request ({},{}): {}'.format(
@@ -225,7 +220,6 @@ class BasicSshHoneypot(paramiko.ServerInterface):
             'client public key ({},{}): username: {}, key name: {}, md5 fingerprint: {}, base64: {}, bits: {}'.format(
                 self.client_ip, self.client_port, username, key.get_name(), fingerprint, key.get_base64(),
                 key.get_bits()))
-        a_username = username
 
         return paramiko.AUTH_PARTIALLY_SUCCESSFUL
 
@@ -233,9 +227,15 @@ class BasicSshHoneypot(paramiko.ServerInterface):
         # Accept all passwords as valid by default
         logger.info('new client credentials ({},{}): username: {}, password: {}'.format(
             self.client_ip, self.client_port, username, password))
+
+        self.a_username = username  # to send it to handelconnection
+
         if str(password) == "test":  # set the needed  password
             return paramiko.AUTH_SUCCESSFUL
         else:
+            self.num_failed = self.num_failed + 1
+            print("here")
+
             return paramiko.AUTH_FAILED
 
     def check_channel_shell_request(self, channel):
@@ -251,6 +251,11 @@ class BasicSshHoneypot(paramiko.ServerInterface):
         logger.info('client sent command via check_channel_exec_request ({},{}): {}'.format(
             self.client_ip, self.client_port, username, command))
         return True
+
+    # def get_username(self):
+
+
+# return self.a_username;
 
 
 def handle_connection(client, addr, port):
@@ -269,7 +274,7 @@ def handle_connection(client, addr, port):
     num_compromised_file = 0  # 3
     root_shell = 0
     su_attempted = 0
-    num_root = 0
+    num_root = 0  # if the username = root, if the command start with root and if su_attempted
     num_file_creations = 0
     num_shells = 1
     num_access_files = 0
@@ -302,14 +307,14 @@ def handle_connection(client, addr, port):
         transport.add_server_key(HOST_KEY)
         transport.local_version = SSH_BANNER  # Change banner to appear more convincing
         server = BasicSshHoneypot(client_ip, client_port)
-        
 
         try:
             transport.start_server(server=server)
 
         except paramiko.SSHException:
             print('*** SSH negotiation failed.')
-            num_failed_login = num_failed_login + 1
+            # num_failed_login = num_failed_login + 1
+
             raise Exception("SSH negotiation failed")
 
         # wait for auth
@@ -338,17 +343,17 @@ def handle_connection(client, addr, port):
             num_shells = 0
             raise Exception("No shell request")
         try:
-            #username = BasicSshHoneypot.a_username
+            username = server.a_username
+            num_failed_login = server.num_failed
             if username == "root" or username == "Root":
-            	root_shell = 1
-            	num_root = num_root + 1
-		    
+                root_shell = 1
+                num_root = num_root + 1
+
             if username == "root" or username == "Root" or username == "admin" or username == "Admin":
-            	is_hot_login = 1
+                is_hot_login = 1
             else:
-            	is_guest_login = 1
-            
-            print(username)
+                is_guest_login = 1
+
             logged_in = 1
 
             chan.send("Welcome to Ubuntu 18.04.4 LTS (GNU/Linux 4.15.0-128-generic x86_64)\r\n\r\n")
@@ -376,21 +381,20 @@ def handle_connection(client, addr, port):
                 # detect_url(command, client_ip)
 
                 if command == "exit" or command == "quit" or command == "logout":
-                	end = time.time()
-                	duration = end - start
-                	date_time = float(start) + 6 * 60 * 60 + float(duration)
-                	date_time = time.localtime(date_time)
-                	date_time = time.strftime("[%d/%b/%Y %H:%M:%S]", date_tme)
-                	
-                	
-                	logger_2.info(
-                         '{} {} {} {} {},{},{},{},{},{},{},{},{},{},{},{},{},{}'.format(
+                    end = time.time()
+                    duration = end - start
+                    date_time = float(start) + 6 * 60 * 60 + float(duration)
+                    date_time = time.localtime(date_time)
+                    date_time = time.strftime("[%d/%b/%Y %H:%M:%S]", date_tme)
+
+                    logger_2.info(
+                        '{} {} {} {} {},{},{},{},{},{},{},{},{},{},{},{},{},{}'.format(
                             str(date_time), str(src_ip), str(src_port), str(dst_ip), str(dst_port), str(hot),
                             str(num_failed_login), str(logged_in), str(num_compromised_file), str(root_shell),
                             str(su_attempted), str(num_root), str(num_file_creations), str(num_shells),
                             str(num_access_files), str(num_outbound_cmds), str(is_hot_login), str(is_guest_login)))
-                            
-                	run = False
+
+                    run = False
 
 
 
@@ -436,11 +440,11 @@ def handle_connection(client, addr, port):
                     client_ip, client_port, duration, protocol_type, service_type, str(logged_in), str(su_attempted),
                     str(num_file_creations), str(root_shell)))
             logger_2.info(
-                        '{} {} {} {} {},{},{},{},{},{},{},{},{},{},{},{},{},{}'.format(
-                            str(date_time), str(src_ip), str(src_port), str(dst_ip), str(dst_port), str(hot),
-                            str(num_failed_login), str(logged_in), str(num_compromised_file), str(root_shell),
-                            str(su_attempted), str(num_root), str(num_file_creations), str(num_shells),
-                            str(num_access_files), str(num_outbound_cmds), str(is_hot_login), str(is_guest_login)))
+                '{} {} {} {} {},{},{},{},{},{},{},{},{},{},{},{},{},{}'.format(
+                    str(date_time), str(src_ip), str(src_port), str(dst_ip), str(dst_port), str(hot),
+                    str(num_failed_login), str(logged_in), str(num_compromised_file), str(root_shell),
+                    str(su_attempted), str(num_root), str(num_file_creations), str(num_shells),
+                    str(num_access_files), str(num_outbound_cmds), str(is_hot_login), str(is_guest_login)))
 
             print('!!! Exception: {}: {}'.format(err.__class__, err))
             try:
@@ -450,10 +454,26 @@ def handle_connection(client, addr, port):
 
         chan.close()
 
-    except Exception as err:
+    except Exception as err:  ##he tried the pass 3 times and failed
         print('!!! Exception: {}: {}'.format(err.__class__, err))
+        date_time = float(start) + 6 * 60 * 60
+        date_time = time.localtime(date_time)
+        date_time = time.strftime("[%d/%b/%Y %H:%M:%S]", date_time)
+        username = server.a_username
+        num_shells = 0
+        if (username == "root" or username == "Root"):
+            is_hot_login = 1
+        num_failed_login = server.num_failed
+        logger_2.info(
+            '{} {} {} {} {},{},{},{},{},{},{},{},{},{},{},{},{},{} '.format(
+                str(date_time), str(src_ip), str(src_port), str(dst_ip), str(dst_port), str(hot),
+                str(num_failed_login), str(logged_in), str(num_compromised_file), str(root_shell),
+                str(su_attempted), str(num_root), str(num_file_creations), str(num_shells),
+                str(num_access_files), str(num_outbound_cmds), str(is_hot_login), str(is_guest_login)))
         try:
             transport.close()
+
+
         except Exception:
             pass
 
@@ -484,8 +504,6 @@ def start_server(port, bind):
 
     for thread in threads:
         thread.join()
-
-    
 
 
 if __name__ == "__main__":
