@@ -152,7 +152,7 @@ def handle_cmd(cmd, chan, ip, port):
         response = ping(cmd)
     if cmd.startswith("echo"):
         command = cmd
-        command = command.split()
+        command = command.split(" ")
         response = command[1]
     if cmd.startswith("cat"):
         response = cat(cmd)
@@ -177,13 +177,6 @@ def handle_cmd(cmd, chan, ip, port):
     #############################
     if cmd.startswith("su root"):
         response = "su: Authentication failure"
-    if cmd.startswith(">"):
-        response = ""
-    if cmd.startswith("touch"):
-        response = ""
-    if cmd.startswith("echo"):
-        response = ""
-
     if response != '':
         logger.info('Response from honeypot ({},{}): '.format(ip, port, response))
         response = response + "\r\n"
@@ -194,7 +187,7 @@ class BasicSshHoneypot(paramiko.ServerInterface):
     client_ip = None
     client_port = None
     a_username = ""  # i use it to transfer the username to handel connetion function > by using server.a_username
-    num_failed = 0  # i use to transfer it to handel connetion function > by using server.num_faild
+    num_failed = 0  # i use to transfer it to handel connetion function > by using server.num_failed
 
     def __init__(self, client_ip, client_port):
         self.client_ip = client_ip
@@ -234,7 +227,6 @@ class BasicSshHoneypot(paramiko.ServerInterface):
             return paramiko.AUTH_SUCCESSFUL
         else:
             self.num_failed = self.num_failed + 1
-            print("here")
 
             return paramiko.AUTH_FAILED
 
@@ -252,11 +244,6 @@ class BasicSshHoneypot(paramiko.ServerInterface):
             self.client_ip, self.client_port, username, command))
         return True
 
-    # def get_username(self):
-
-
-# return self.a_username;
-
 
 def handle_connection(client, addr, port):
     client_ip = addr[0]
@@ -271,14 +258,14 @@ def handle_connection(client, addr, port):
     hot = 0
     num_failed_login = 0
     logged_in = 0
-    num_compromised_file = 0  # 3
+    num_compromised_file = 0  ###########
     root_shell = 0
     su_attempted = 0
-    num_root = 0  # if the username = root, if the command start with root and if su_attempted
+    num_root = 0  # each command start with root and all commands if user is root
     num_file_creations = 0
     num_shells = 1
     num_access_files = 0
-    num_outbound_cmds = 0
+    num_outbound_cmds = 0  ########
     is_hot_login = 0
     is_guest_login = 0
     ##############################
@@ -347,7 +334,6 @@ def handle_connection(client, addr, port):
             num_failed_login = server.num_failed
             if username == "root" or username == "Root":
                 root_shell = 1
-                num_root = num_root + 1
 
             if username == "root" or username == "Root" or username == "admin" or username == "Admin":
                 is_hot_login = 1
@@ -377,16 +363,19 @@ def handle_connection(client, addr, port):
 
                 chan.send("\r\n")
                 command = command.rstrip()
+                if (root_shell):
+                    num_root = num_root + 1
                 logger.info('Command receied ({},{}): {}'.format(client_ip, client_port, command))
                 # detect_url(command, client_ip)
 
                 if command == "exit" or command == "quit" or command == "logout":
                     end = time.time()
                     duration = end - start
-                    date_time = float(start) + 6 * 60 * 60 + float(duration)
+                    date_time = float(start) + 6 * 60 * 60
                     date_time = time.localtime(date_time)
-                    date_time = time.strftime("[%d/%b/%Y %H:%M:%S]", date_tme)
-
+                    date_time = time.strftime("[%d/%b/%Y %H:%M:%S]", date_time)
+                    if (root_shell):
+                        num_root = num_root + 1
                     logger_2.info(
                         '{} {} {} {} {},{},{},{},{},{},{},{},{},{},{},{},{},{}'.format(
                             str(date_time), str(src_ip), str(src_port), str(dst_ip), str(dst_port), str(hot),
@@ -409,10 +398,21 @@ def handle_connection(client, addr, port):
                             recivedpass = chan.recv(1024)
                             passward += recivedpass.decode("utf-8")
                         chan.send("\r\n")
+                    if command.startswith("root"):
+                        num_root = num_root + 1
+                        subcommand = command.split(" ")[1]
+                        command = subcommand
+                    if command.startswith("chmod") or command.startswith("chown") or command.startswith("chgrp"):
+                        num_access_files += 1
+                    if command.startswith("cd /") or command.startswith("cd /root/") or command.startswith(
+                            "gcc") or command.startswith("gedit") or command.startswith("./") or command.startswith(
+                            "python"):  ########
+                        hot += 1
+
                     if command.startswith(">") or command.startswith("touch") or command.startswith(
-                            "cat >") or command.startswith("echo"):
+                            "cat > ") or command.startswith("echo"):
                         num_file_creations = num_file_creations + 1
-                        if command.startswith(">"):
+                        if command.startswith(">" or "cat > "):
                             txt = ""
                             txt1 = ""
                             while not txt1.endswith('\x03'):
@@ -423,8 +423,6 @@ def handle_connection(client, addr, port):
                                     txt = recivedtxt.decode("utf-8")
                                 chan.send(txt)
                                 txt1 += recivedtxt.decode("utf-8")
-                    if command.startswith("root"):
-                        num_root = num_root + 1
 
                     handle_cmd(command, chan, client_ip, client_port)
 
