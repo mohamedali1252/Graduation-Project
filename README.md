@@ -1,5 +1,3 @@
-# About
-Mailoney is a SMTP Honeypot I wrote just to have fun learning Python. There are various modules or types (see below) that provide custom modes to fit your needs. Happily accepting advise, feature or pull requests. 
 
 # Installation
 At this time, everything should be included in a Linux python environment. Simply follow the usage instructions. 
@@ -36,25 +34,4 @@ Setting this up is easy, lets say we want to run Mailoney on port 2525 (a nice n
 #### IPTables example
 We can redirect port 25 to port 2525 with IPtables:
 `$ sudo iptables -t nat -A PREROUTING -p tcp --dport 25 -j REDIRECT --to-port 2525`
-
-#### UFW example
-If you are using UFW, you can edit *before.rules* (`/etc/ufw/before.rules`) by adding the following to the beginning:
-```
-*nat
--F
-:PREROUTING ACCEPT [0:0]
--A PREROUTING -p tcp --dport 25 -j REDIRECT --to-port 2525
-COMMIT
-```
-Then run `ufw reload` and you are all set. 
-
-# ToDo 
- - [ ] Add modules for EXIM, Microsoft, others
- - [ ] Build in Error Handling
- - [X] ~~Add a Daemon flag to background process.~~
- - [X] ~~Secure this by not requiring elevated perms, port forward from port 25.~~
- - [ ] Database logging
- - [ ] Possible relay for test emails. 
- - [ ] Make honeypot detection more difficult
- 	(e.g. fuzz mailoney with SMTP commands, catch exceptions, patch and profit)
 
