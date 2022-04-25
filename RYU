@@ -1,0 +1,36 @@
+
+https://drive.google.com/file/d/1sALzmMklkUtOWfilAeMH4gfX2F-ubzQT/view
+
+sudo apt-get -y install mininet //kali
+mn -h //to see the help
+service openvswitch-switch start //to start the openflow switch
+
+or we can use python scripts to run mininet as APIs : http://mininet.org/api/annotated.html
+this is the website that you will find the APIs on it
+
+
+#full steps
+sudo service openvswitch-switch start
+sudo mn --controller=remote,ip=127.0.0.1 --switch=ovsk,protcols=OpenFlow13 --topo=minimal --mac
+sudo mn -c
+
+sudo ovs-vsctl set bridge s1 protocols=OpenFlow13
+sudo ovs-vsctl show
+
+
+sudo ovs-ofctl -O OpenFlow13 dump-flows s1
+
+#installing RYU
+https://www.youtube.com/watch?v=6eLWt6XuYj8
+sudo pip install -r pip-requires
+sudo python3 setup.py install
+
+
+#the path that ryu saw
+/home/kali/.local/lib/python3.9/site-packages/ryu/app/simple_switch_13.py 
+https://ryu.readthedocs.io/en/latest/library_pcap.html
+
+
+ryu-manager --verbose ryu.app.simple_switch_13
+h1 ping -c3 h2
+sudo ryu-manager ~/flow/Switch.py
