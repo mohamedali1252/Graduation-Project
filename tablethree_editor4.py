@@ -79,7 +79,7 @@ def table_three(connections_after,filename,mode):
 
                     
                     for con2 in con_array:
-                        if (con2 != con) & ((time_insec(float(con[1]))- time_insec(float(con2[1]) ) ) <= 2.0 ) & ((time_insec(float(con[1]))- time_insec(float(con2[1]) ) ) >= 0):
+                        if  ((time_insec(float(con[1]))- time_insec(float(con2[1]) ) ) <= 2.0 ) & ((time_insec(float(con[1]))- time_insec(float(con2[1]) ) ) >= 0):
                             
                             #if same src (not sure) & same dst  Based on the doctor opinion and some papers 3la ALLAH ba2a
                             if  ((con[4] == con2[4]) & (con[5] == con2[5]) )  :
@@ -156,7 +156,7 @@ def table_three(connections_after,filename,mode):
                     elif mode == 2:
                         #take a window of 2 min based on avg time of probing
                         for con2 in con_array:
-                            if (con2 != con) & ((time_insec(float(con[1]))- time_insec(float(con2[1]) ) ) <= 120.0 ) & ((time_insec(float(con[1]))- time_insec(float(con2[1]) ) ) >= 0):
+                            if  ((time_insec(float(con[1]))- time_insec(float(con2[1]) ) ) <= 120.0 ) & ((time_insec(float(con[1]))- time_insec(float(con2[1]) ) ) >= 0):
 
                                 if con2[5] == con[5]: #same dst IP
                                     temp_Dst_host_count +=1
