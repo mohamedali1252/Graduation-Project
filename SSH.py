@@ -245,6 +245,8 @@ class BasicSshHoneypot(paramiko.ServerInterface):
         return True
 
 
+
+
 def handle_connection(client, addr, port):
     client_ip = addr[0]
     client_port = addr[1]
@@ -265,12 +267,12 @@ def handle_connection(client, addr, port):
     num_file_creations = 0
     num_shells = 1
     num_access_files = 0
-    num_outbound_cmds = 0  ########
+    num_outbound_cmds = 0     ########
     is_hot_login = 0
     is_guest_login = 0
     ##############################
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("127.0.0.1", 2222))
+    s.connect(("8.8.8.8", 80))
     local_ip = s.getsockname()[0]
     s.close()
     ############################
@@ -282,9 +284,10 @@ def handle_connection(client, addr, port):
     land = 0
     dst_port = port
     dst_ip = local_ip
+    print (local_ip)
 
     if client_ip == local_ip or client_ip == "127.0.0.1" or client_ip == "127.0.0.2":
-        if client_port == "2222" or client_port == port:
+        if client_port == "22" or client_port == port:
             land = 1
 
     logger.info(
@@ -310,7 +313,7 @@ def handle_connection(client, addr, port):
             print('*** No channel (from ' + client_ip + ' , ' + client_port + ').')
             raise Exception("No channel")
 
-        chan.settimeout(10)  # time to end the ssh connection if there is no interaction
+        chan.settimeout(120)  # time to end the ssh connection if there is no interaction
 
         if transport.remote_mac != '':
             logger.info('Client mac ({},{}): {}'.format(client_ip, client_port, transport.remote_mac))
@@ -400,17 +403,14 @@ def handle_connection(client, addr, port):
                         chan.send("\r\n")
                     if command.startswith("root"):
                         num_root = num_root + 1
-                        subcommand = command.split(" ")[1]
-                        command = subcommand
+                        subcommand = command.split(" ") [1]
+                        command =subcommand
                     if command.startswith("chmod") or command.startswith("chown") or command.startswith("chgrp"):
-                        num_access_files += 1
-                    if command.startswith("cd /") or command.startswith("cd /root/") or command.startswith(
-                            "gcc") or command.startswith("gedit") or command.startswith("./") or command.startswith(
-                            "python"):  ########
-                        hot += 1
-
-                    if command.startswith(">") or command.startswith("touch") or command.startswith(
-                            "cat > ") or command.startswith("echo"):
+                    	num_access_files += 1
+                    if command.startswith("cd /") or command.startswith("cd /root/") or command.startswith("gcc") or command.startswith("gedit") or command.startswith("./") or command.startswith("python") :########
+                    	hot += 1
+                    	
+                    if command.startswith(">") or command.startswith("touch") or command.startswith("cat > ") or command.startswith("echo"):
                         num_file_creations = num_file_creations + 1
                         if command.startswith(">" or "cat > "):
                             txt = ""
@@ -423,6 +423,7 @@ def handle_connection(client, addr, port):
                                     txt = recivedtxt.decode("utf-8")
                                 chan.send(txt)
                                 txt1 += recivedtxt.decode("utf-8")
+                    
 
                     handle_cmd(command, chan, client_ip, client_port)
 
@@ -506,7 +507,7 @@ def start_server(port, bind):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run an SSH honeypot server')
-    parser.add_argument("--port", "-p", help="The port to bind the ssh server to (default 22)", default=2222, type=int,
+    parser.add_argument("--port", "-p", help="The port to bind the ssh server to (default 22)", default=22, type=int,
                         action="store")
     parser.add_argument("--bind", "-b", help="The address to bind the ssh server to", default="", type=str,
                         action="store")
