@@ -67,7 +67,7 @@ RESPONSE = {
     LOGIN_SUCCEED:            b'230 User logged in\nRemote System type is UNIX\nusing binary mode to transfer files',
     LOGIN_ANONYMOUS_SUCCEED:  b'230 User anonymous logged in\nRemote System type is UNIX\nusing binary mode to transfer files',
     REQ_ACTN_NOT_TAKEN:       b'550 Requested action not taken: %s',
-    HELP_MSG:                 b'214-The following commands are recognized.\nUSER            PASS            CWD\nPWD             QUIT            BYE             \nLS              ASCII           BINARY\n           PUT           SITE CHMOD\n214 Help Ok.'
+    HELP_MSG:                 b'214-The following commands are recognized.\nUSER            PASS            CWD\nPWD             QUIT            BYE             \nLS              ASCII           BINARY\nPUT             SITE CHMOD\n214 Help Ok.'
     ,
     ASCII_COMMAND:               b'200 Type set to ASCII',
     BINARY_COMMAND:              b'200 Type set to BINARY', 
@@ -582,7 +582,7 @@ class ftpFactory(protocol.ServerFactory):
 
 
 log.startLogging(open('ftp.log','w'))
-reactor.listenTCP(23,ftpFactory())
+reactor.listenTCP(22,ftpFactory())
 
 
 
