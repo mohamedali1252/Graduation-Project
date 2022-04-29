@@ -42,7 +42,7 @@ def edit_features():
             land = sep_conn[13]
             wrong_fragment = sep_conn[14]
             urgent = sep_conn[15]
-            total = float(start_time) + 6 * 60 * 60 + float(duration)
+            total = float(start_time) + 6 * 60 * 60
             t = time.localtime(total)
             time_string = time.strftime("[%d/%b/%Y %H:%M:%S]", t)
             hot = sep_conn[16]
@@ -59,12 +59,20 @@ def edit_features():
             is_hot_login = sep_conn[27]
             is_guest_login = sep_conn[28]
             line2 = ''
+
             if service == "ssh" or resp_p == "22":
+                print(resp_p)
                 file_ssh = open("ssh.log", "r")
                 for x in file_ssh:
+                   # print('x in ssh')
+                    #print(x)
+                    print('timestring',time_string)
+                    y = x.split(']')
+                    s = y[0] + ']'
+                    #print(y[0]+']')
+                    #print(total)
                     # [date time] src_ip src_port dst_ip dst_port,hot,num_failed_login,logged_in,num_compromised_file,root_shell,su_attempted,num_root,num_file_creations,num_shells,num_access_files,num_outbound_cmds,is_hot_login,is_guest_login
-                    if (time_string in x) and (orig_h in x) and (orig_p in x) and (resp_h in x) and (resp_p in x):
-                        print("found one")
+                    if (s == time_string) and (orig_h in x) and (orig_p in x) and (resp_h in x) and (resp_p in x):
                         ssh = x.split(",")
                         hot = ssh[1]
                         num_failed_logins = ssh[2]
@@ -82,11 +90,12 @@ def edit_features():
                         line2 = duration + "," + protocol + "," + "ssh" + "," + flag + "," + src_bytes + "," + dst_bytes + "," + land + "," + wrong_fragment + "," + urgent + "," + hot + "," + num_failed_logins + "," + logged_in + "," + num_compromised + "," + root_shell + "," + su_attempted + "," + num_root + "," + num_file_creations + "," + num_shells + "," + num_access_files + "," + num_outbound_cmds + "," + is_hot_login + "," + is_guest_login
                         connections_after.append(line2)
             elif service == "ftp" or resp_p == "21":
-                print('yes INNNNNNNNNNNNNNNNNNNNNN')
+                #print('yes INNNNNNNNNNNNNNNNNNNNNN')
                 file_ftp = open("ftplog.txt", "r")
                 for x in file_ftp:
+                    y = x.split()
                     # [date time] src_ip src_port dst_ip dst_port,hot,num_failed_login,logged_in,num_compromised_file,root_shell,su_attempted,num_root,num_file_creations,num_shells,num_access_files,num_outbound_cmds,is_hot_login,is_guest_login
-                    if (time_string in x) and (orig_h in x) and (orig_p in x) and (resp_h in x) and (resp_p in x):
+                    if (start_time in x) and (orig_h in x) and (orig_p in x) and (resp_h in x) and (resp_p in x):
                         print("found one")
                         ftp = x.split(",")
                         hot = ftp[1]
@@ -108,8 +117,12 @@ def edit_features():
                 line2 = duration + "," + protocol + "," + "smtp" + "," + flag + "," + src_bytes + "," + dst_bytes + "," + land + "," + wrong_fragment + "," + urgent + "," + hot + "," + num_failed_logins + "," + logged_in + "," + num_compromised + "," + root_shell + "," + su_attempted + "," + num_root + "," + num_file_creations + "," + num_shells + "," + num_access_files + "," + num_outbound_cmds + "," + is_hot_login + "," + is_guest_login
                 connections_after.append(line2)
     # calculate table 3 faetures for each connection and append them to connections_after
-    table_three(connections_after, sys.argv[1], 2)
+    print(len(connections_after))
+    table_three(connections_after,sys.argv[1], 2)
     file_after = open("formated.txt", "w")
     for i in range(0, len(connections_after)):
         file_after.write(connections_after[i])
     file_after.close()
+
+
+edit_features()
