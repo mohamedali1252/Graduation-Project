@@ -152,7 +152,8 @@ class FTPpot(basic.LineOnlyReceiver, policies.TimeoutMixin):
     is_guest_login     =  0
     hot                =  0                                            #Num HOT indicators such as: entering a system directory, creating programs and executing programs.
     num_compromised_files = 0 
-    ftplog =   ftplog = open("ftplog.txt", "w")                                       #second phase ISA
+    ftplog  = open("ftplog.txt", "w")                                       #second phase ISA
+    yarab = ''
    
     def sendLine(self, msg):
       basic.LineOnlyReceiver.sendLine(self, msg)
@@ -172,106 +173,63 @@ class FTPpot(basic.LineOnlyReceiver, policies.TimeoutMixin):
 
     def connectionMade(self):
         self.count = self.count + 1
- 
+
         self.con_start_time = time.time()
-        self.con_id += str(self.con_start_time)
+        date_time = float(self.con_start_time) + 6 * 60 * 60
+        date_time = time.localtime(date_time)
+        date_time = time.strftime("[%d/%b/%Y %H:%M:%S]", date_time)
+ 
+        
+        self.con_id += str(date_time)
         self.con_id += ' '
         self.con_id += self.transport.getHost().host
         self.con_id += ' '
-        self.con_id += '23'
+        self.con_id += '21'
         self.con_id += ' '
         self.con_id+= self.transport.getPeer().host
         self.con_id += ' '
         self.con_id +=str(self.transport.getPeer().port)
-        #clear the con_list
-        self.con_list.clear()
-        self.con_list.append(self.con_id)
 
-        if self.first_con == 1:
-            self.first_con = 0
+        self.yarab = self.con_id
+
       
         self.reply(WELCOME_MSG,0)
        
-        #create a log file
-        if self.first_con == 0:
-            self.ftplog = open("ftplog.txt", "a")
 
-        	
 		
-        
+        self.ftplog = open("ftplog.txt", "a")
 
        
 
 
     def connectionLost(self, reason):
-        # log.msg(reason)
         #F1: Duration
         duration =   time.time() - self.con_start_time
         log.msg('duration=%s'% duration)
         log.msg(self.transport.getPeer().host)
 
-        #content related features
-        self.con_list.append(',')
-        self.con_list.append(self.hot)
-        self.con_list.append(',')
-        self.con_list.append(self.num_failed_logins)
-        self.con_list.append(',')
-        self.con_list.append(self.loggedin)
-        self.con_list.append(',')
-        self.con_list.append(self.num_compromised_files)
-        self.con_list.append(',')
-        self.con_list.append(self.root_shell)
-        self.con_list.append(',')
-        self.con_list.append(self.su_attempted)
-        self.con_list.append(',')
-        self.con_list.append(self.num_root)
-        self.con_list.append(',')
-        self.con_list.append(self.num_file_creations)
-        self.con_list.append(',')
-        self.con_list.append(self.num_shells)
-        self.con_list.append(',')
-        self.con_list.append(self.num_access_files)
-        self.con_list.append(',')
-        self.con_list.append(self.num_outbound_cmds)
-        self.con_list.append(',')
-        self.con_list.append(self.is_hot_login)
-        self.con_list.append(',')
-        self.con_list.append(self.is_guest_login)
-        self.con_list.append('\n')
-        
 
+        self.yarab += ',' + str(self.hot) + ',' + str(self.num_failed_logins) + ',' + str(self.loggedin) + ',' + str(self.num_compromised_files) + ',' + str(self.root_shell) + ',' + str(self.su_attempted) + ',' + str(self.num_root) + ',' + str(self.num_file_creations) + ',' + str(self.num_shells) + ',' + str(self.num_access_files) + ',' + str(self.num_outbound_cmds) + ',' + str(self.is_hot_login) + ',' + str(self.is_guest_login) +'\n'
 
-        for i in range(0,len(self.con_list)):
-            if i > 0:
-                self.ftplog.write(str(self.con_list[i]))
-                print(str(self.con_list[i]))
-            else:
-                self.ftplog.write(self.con_list[i])
-
+        self.ftplog.write(self.yarab)
+        self.yarab = ''
           
-        self.ftplog.close()
-
-
-        
-
-        
-        self.setTimeout(None)
-        
+        self.ftplog.close()    
+        self.setTimeout(None)     
         self.transport = None
+
+
 
     def timeoutConnection(self):
         line = "ConnectionTimeout: %s : %s : %s : %s\n" % (strftime('%F %T'), self.transport.getPeer().host, self.username.decode("utf8"),self.password.decode("utf8"))
         #log.msg(line)
         self.transport.loseConnection()
 
+
     def lineReceived(self, line):
         self.resetTimeout()
 
         def processFailed(err):
-            #if err.check(FTPCmdError):
-            #    self.sendLine(err.value.response())
-            #else:
-            #log.msg("Unexpected FTP error")
             log.err(err)
 
         def processSucceeded(result):
@@ -398,6 +356,7 @@ class FTPpot(basic.LineOnlyReceiver, policies.TimeoutMixin):
             elif cmd == b'SITE CHMOD':
                 if self.root_shell == 1:
                   self.num_root +=1
+                  self.num_access_files += 1
                 if self.root_shell == 0:
                     self.num_access_files += 1
                     return NEED_ROOT
@@ -582,7 +541,7 @@ class ftpFactory(protocol.ServerFactory):
 
 
 log.startLogging(open('ftp.log','w'))
-reactor.listenTCP(22,ftpFactory())
+reactor.listenTCP(21,ftpFactory())
 
 
 
