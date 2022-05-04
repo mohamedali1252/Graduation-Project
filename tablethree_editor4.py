@@ -2,7 +2,7 @@ import sys
 import time
 import os
 from time import strftime
-import datetime
+import datetimecd
 
 test_yarab = ''
 
