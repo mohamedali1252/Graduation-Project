@@ -175,7 +175,8 @@ class FTPpot(basic.LineOnlyReceiver, policies.TimeoutMixin):
         self.count = self.count + 1
 
         self.con_start_time = time.time()
-        date_time = float(self.con_start_time) + 6 * 60 * 60
+        #date_time = float(self.con_start_time) + 6 * 60 * 60
+        date_time = float(self.con_start_time)
         date_time = time.localtime(date_time)
         date_time = time.strftime("[%d/%b/%Y %H:%M:%S]", date_time)
  
