@@ -42,17 +42,7 @@ def table_three(connections_after,filename, mode):
         con_array.append(x.split(','))
         connections_count += 1
     file_name.close()
-    print(' ')
-    print(' ')
-    print(' ')
-    print(' ')
 
-    print('=========here=================================================================================')
-    for x in con_array:
-        if x[7] == 'ssh':
-            print(x)
-
-    print('=========FINISH=================================================================================')
     for index, con in enumerate(con_array):
         #print('index', index + 1)
         #print("connection to check on >>", con)
