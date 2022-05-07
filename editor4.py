@@ -7,16 +7,20 @@ from tablethree_editor4 import table_three
 
 
 def edit_features():
-    connections = []
-    connections_after = []
-    connections_count = 0
-    con_array = []
-    line2 = ''
+        connections = []
+        connections_after = []
+        connections_count = 0
+        con_array = []
+        line2 = ''
+        #for attacks that are not in log files
+        ssh_match = 0
+        ftp_match = 0
+        smtp_match = 0
 
-    if len(sys.argv) != 2:
-        return 1
-    else:
-        read = sys.argv[1]
+
+
+  
+        read = "conn_sort.list"
         file_csv = open(read, "r")
         for x in file_csv:
             connections.append(x)
@@ -25,6 +29,9 @@ def edit_features():
         file_csv.close()
         for counter in range(0, connections_count):
             line1 = connections[counter]
+            line1 = line1.rstrip('/n')
+            print('linehgdcfhyfdghcjgdsjhhdkdaJOAE')
+            print(line1)
             sep_conn = line1.split(",")
             conn_no = sep_conn[0]
             start_time = sep_conn[1]
@@ -60,11 +67,19 @@ def edit_features():
             is_guest_login = sep_conn[28]
             line2 = ''
 
+            #############
+            print('checking con from the conn_sort.list')
+            print(line1)
+            print('now see match with ssh OR FTP')
+
+            ##############
+
             if service == "ssh" or resp_p == "22":
 
                 file_ssh = open("ssh.log", "r")
+                ssh_match = 0
                 for x in file_ssh:
-                    #print('x in ssh')
+                    print('x in ssh')
                     x = x.split('\n')
                     x = x[0]
                     x = x.rstrip()  #to remove trailer spaces
@@ -92,28 +107,47 @@ def edit_features():
                         num_outbound_cmds = ssh[11]
                         is_hot_login = ssh[12]
                         is_guest_login = ssh[13]
-                        line2 = duration + "," + protocol + "," + "ssh" + "," + flag + "," + src_bytes + "," + dst_bytes + "," + land + "," + wrong_fragment + "," + urgent + "," + hot + "," + num_failed_logins + "," + logged_in + "," + num_compromised + "," + root_shell + "," + su_attempted + "," + num_root + "," + num_file_creations + "," + num_shells + "," + num_access_files + "," + num_outbound_cmds + "," + is_hot_login + "," + is_guest_login
+                        line2 = duration + "," + protocol + "," + "ssh" + "," + flag + "," + src_bytes + "," + dst_bytes + "," + land + "," + wrong_fragment + "," + urgent + "," + hot + "," + num_failed_logins + "," + logged_in + "," + num_compromised + "," + root_shell + "," + su_attempted + "," + num_root + "," + num_file_creations + "," + num_shells + "," + num_access_files + "," + num_outbound_cmds + "," + is_hot_login + "," + '0'
                         connections_after.append(line2)
+                        ssh_match = 1
+                        print('is guest login')
+                        print(is_guest_login,'hey')
+                        print('jjj')
+                        print(protocol,'hey')
+                        print(line2)
+                        break;
 
-                    else:
-                         line2 = duration + "," + protocol + "," + service + "," + flag + "," + src_bytes + "," + dst_bytes + "," + land + "," + wrong_fragment + "," + urgent + "," + hot + "," + num_failed_logins + "," + logged_in + "," + num_compromised + "," + root_shell + "," + su_attempted + "," + num_root + "," + num_file_creations + "," + num_shells + "," + num_access_files + "," + num_outbound_cmds + "," + is_hot_login + "," + is_guest_login
-                         print(line2)
-                         connections_after.append(line2)
+                if ssh_match == 0 and service == 'ssh':
+                    print('in ssh but in Probes')
+
+                    line2 = duration + "," + protocol + "," + "ssh" + "," + flag + "," + src_bytes + "," + dst_bytes + "," + land + "," + wrong_fragment + "," + urgent + "," + hot + "," + num_failed_logins + "," + logged_in + "," + num_compromised + "," + root_shell + "," + su_attempted + "," + num_root + "," + num_file_creations + "," + num_shells + "," + num_access_files + "," + num_outbound_cmds + "," + is_hot_login + "," + '0'
+                    connections_after.append(line2)
+                    print('ssh_match = 0')
+                    print(sep_conn)
+
+            
             elif service == "ftp" or resp_p == "21":
-                #print('yes INNNNNNNNNNNNNNNNNNNNNN')
+                print('--------------in ftp----------------------')
                 file_ftp = open("ftplog.txt", "r")
+                print(time_string)
+                ftp_match = 0
                 for x in file_ftp:
-                    # print('x in ftp')
                     x = x.split('\n')
                     x = x[0]
                     x = x.rstrip()  # to remove trailer spaces
+                    print('x from ftp')
+                    print(x)
+                   
 
                     y = x.split(']')
                     s = y[0] + ']'
-                    # print(y[0]+']')
+                    print(' from ftplog >> S = ',s)
+                    print('from conn_sort>>timestring',time_string)
 
 
                     if (s == time_string) and (orig_h in x) and (orig_p in x) and (resp_h in x) and (resp_p in x):
+                        print('match with ftplog.txt')
+                        print(sep_conn)
 
 
                         #print(x)
@@ -131,18 +165,33 @@ def edit_features():
                         num_outbound_cmds = ftp[11]
                         is_hot_login = ftp[12]
                         is_guest_login = ftp[13]
-                        line2 = duration + "," + protocol + "," + "ssh" + "," + flag + "," + src_bytes + "," + dst_bytes + "," + land + "," + wrong_fragment + "," + urgent + "," + hot + "," + num_failed_logins + "," + logged_in + "," + num_compromised + "," + root_shell + "," + su_attempted + "," + num_root + "," + num_file_creations + "," + num_shells + "," + num_access_files + "," + num_outbound_cmds + "," + is_hot_login + "," + is_guest_login
+                        line2 = duration + "," + protocol + "," + "ftp" + "," + flag + "," + src_bytes + "," + dst_bytes + "," + land + "," + wrong_fragment + "," + urgent + "," + hot + "," + num_failed_logins + "," + logged_in + "," + num_compromised + "," + root_shell + "," + su_attempted + "," + num_root + "," + num_file_creations + "," + num_shells + "," + num_access_files + "," + num_outbound_cmds + "," + is_hot_login + "," + '0'
                         connections_after.append(line2)
+                        ftp_match = 1
+                        break;
+
+                if ftp_match == 0 and service == 'ftp':
+                    line2 = duration + "," + protocol + "," + "ftp" + "," + flag + "," + src_bytes + "," + dst_bytes + "," + land + "," + wrong_fragment + "," + urgent + "," + hot + "," + num_failed_logins + "," + logged_in + "," + num_compromised + "," + root_shell + "," + su_attempted + "," + num_root + "," + num_file_creations + "," + num_shells + "," + num_access_files + "," + num_outbound_cmds + "," + is_hot_login + "," + '0'
+                    connections_after.append(line2)
+
+                    print('ftp But in Probes  ')
+                        
+                    print(line2)
+                    print(x)
 
 
 
 
 
-    table_three(connections_after, sys.argv[1], 2)
-    file_after = open("formated.txt", "w")
-    for i in range(0, len(connections_after)):
-        file_after.write(connections_after[i])
-    file_after.close()
+
+        print('before table 33333333333333333333333333333333333333')
+        print('yarab ba2a')
+        print(connections_after)
+        table_three(connections_after, "conn_sort.list", 2)
+        file_after = open("formated.txt", "w")
+        for i in range(0, len(connections_after)):
+            file_after.write(connections_after[i])
+        file_after.close()
 
 
 edit_features()
