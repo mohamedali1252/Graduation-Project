@@ -2,7 +2,7 @@ import sys
 import time
 import os
 from time import strftime
-import datetimecd
+import datetime
 
 test_yarab = ''
 
@@ -42,6 +42,17 @@ def table_three(connections_after,filename, mode):
         con_array.append(x.split(','))
         connections_count += 1
     file_name.close()
+    print(' ')
+    print(' ')
+    print(' ')
+    print(' ')
+
+    print('=========here=================================================================================')
+    for x in con_array:
+        if x[7] == 'ssh':
+            print(x)
+
+    print('=========FINISH=================================================================================')
     for index, con in enumerate(con_array):
         #print('index', index + 1)
         #print("connection to check on >>", con)
@@ -232,15 +243,17 @@ def table_three(connections_after,filename, mode):
             Dst_host_srv_diff_host_rate.append(round(float(temp_Dst_host_srv_diff_host_rate) / temp_Dst_host_srv_count, 2))
             Dst_host_srv_rerror_rate.append(round(float(temp_Dst_host_srv_rerror_rate) / temp_Dst_host_srv_count, 2))
             Dst_host_srv_serror_rate.append(round(float(temp_Dst_host_srv_serror_rate) / temp_Dst_host_srv_count, 2))
-            Dst_host_same_src_port_rate.append(round(float(temp_Dst_host_same_src_port_rate) / temp_Dst_host_srv_count, 2))
         else:
             Dst_host_same_src_port_rate.append(float(0))
             Dst_host_srv_diff_host_rate.append(float(0))
             Dst_host_srv_rerror_rate.append(float(0))
             Dst_host_srv_serror_rate.append(float(0))
-            Dst_host_same_src_port_rate.append(float(0))
 
     # append to the file
+
+    print(len(Dst_host_same_src_port_rate))
+    print(len(Dst_host_srv_diff_host_rate))
+    print(len(connections_after))
 
 
     for index, i in enumerate(connections_after):
@@ -254,7 +267,3 @@ def table_three(connections_after,filename, mode):
             Dst_host_rerror_rate[index]) + "," + str(Dst_host_srv_rerror_rate[index])
         connections_after[index] += ','+temp + '\n'
         temp = ''
-
-
-
-
