@@ -23,8 +23,11 @@ from ryu.lib.packet import ethernet
 from ryu.lib.packet import ether_types
 from ryu.lib import pcaplib
 from ryu.lib.packet import ipv4
+from ryu.lib import hub
 
 counter = 0
+flag = False
+dst = "00:00:00:00:00:02"
 
 class SimpleSwitch13(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
@@ -33,13 +36,15 @@ class SimpleSwitch13(app_manager.RyuApp):
         super(SimpleSwitch13, self).__init__(*args, **kwargs)
         self.mac_to_port = {}
         self.pcap_writer = pcaplib.Writer(open('/home/kali/mypcap.pcap', 'wb'))
+        self.datapaths = {}
+        self.monitor_thread = hub.spawn(self.monitor)
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):
         datapath = ev.msg.datapath
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
-
+        self.datapaths[datapath.id] = datapath
         # install table-miss flow entry
         #
         # We specify NO BUFFER to max_len of the output action due to
@@ -66,7 +71,40 @@ class SimpleSwitch13(app_manager.RyuApp):
             mod = parser.OFPFlowMod(datapath=datapath, priority=priority,
                                     match=match, instructions=inst)
         datapath.send_msg(mod)
+    
+    def monitor(self):
+        global dst
+        while True:
+                hub.sleep(10)
+                for datapath in self.datapaths.values():
+                        ofp = datapath.ofproto
+                        ofp_parser = datapath.ofproto_parser
+                        cookie = cookie_mask = 0
+                        match = ofp_parser.OFPMatch(eth_dst=dst)
+                        req = ofp_parser.OFPFlowStatsRequest(datapath, 0,ofp.OFPTT_ALL,ofp.OFPP_ANY,ofp.OFPG_ANY,cookie, cookie_mask,match)
+                        datapath.send_msg(req)
+    
+    
+    @set_ev_cls(ofp_event.EventOFPFlowStatsReply, MAIN_DISPATCHER)
+    def stats_reply_handler(self, ev):
+        global flag,dst
+        for stat in ev.msg.body:
+                dur = stat.duration_sec
+                if dur != 0:
+                        ratio = stat.packet_count/dur
+                        if ratio > 1 and (not flag):
+                                flag = True 
+                                msg = ev.msg
+                                datapath = msg.datapath
+                                ofproto = datapath.ofproto
+                                parser = datapath.ofproto_parser
+                                match = parser.OFPMatch(eth_dst=dst)
+                                instruction = [parser.OFPInstructionActions(ofproto.OFPIT_CLEAR_ACTIONS, [])]
+                                msg = parser.OFPFlowMod(datapath,0,priority = 1,command = ofproto.OFPFC_MODIFY,match = match,instructions = instruction)
+                                datapath.send_msg(msg)
+                                self.logger.info("Time limit Exceed DOS attack")
 
+    
     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
     def _packet_in_handler(self, ev):
         global counter
@@ -117,13 +155,11 @@ class SimpleSwitch13(app_manager.RyuApp):
                 self.add_flow(datapath, 1, match, actions, msg.buffer_id)
                 return
             else:
-                if counter == 0:
+                if counter < 2:
                         counter = counter + 1          
                         actions = [parser.OFPActionOutput(out_port),parser.OFPActionOutput(ofproto.OFPP_CONTROLLER,ofproto.OFPCML_NO_BUFFER)]
                         self.add_flow(datapath, 1, match, actions)
                 else:
-                        actions = [parser.OFPActionOutput(out_port),parser.OFPActionOutput(ofproto.OFPP_CONTROLLER,ofproto.OFPCML_NO_BUFFER)]
-                        self.add_flow(datapath, 1, match, actions)
                         return       
         data = None
         if msg.buffer_id == ofproto.OFP_NO_BUFFER:
