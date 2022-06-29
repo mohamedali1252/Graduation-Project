@@ -1,0 +1,40 @@
+# Notifier example from tutorial
+#
+# See: http://github.com/seb-m/pyinotify/wiki/Tutorial
+#
+import pyinotify
+
+wm = pyinotify.WatchManager()  # Watch Manager
+mask = pyinotify.IN_DELETE | pyinotify.IN_CREATE | pyinotify.IN_MODIFY # watched events
+
+
+class EventHandler(pyinotify.ProcessEvent):
+    lines_count = 0
+    def process_IN_CREATE(self, event):
+        print( "Creating:", event.pathname)
+
+    def process_IN_DELETE(self, event):
+        print ("Removing:", event.pathname)
+        
+    def process_IN_MODIFY(self, event):
+        print ("Modyifying:", event.pathname)
+        self.lines_count += 1
+        print("lines count = ",self.lines_count)
+        #read file 
+        conn_csv_file = open("tmp/conn_sort.list", "r")
+        tmp = self.lines_count - 1
+        for count, line in enumerate(conn_csv_file):
+        	print('file counter', count)
+      
+        	if (count == 0 ) and (self.lines_count==1):
+        		pass
+        	
+        	elif count == self.lines_count-2:
+        		print('here',line)
+        		
+
+handler = EventHandler()
+notifier = pyinotify.Notifier(wm, handler)
+wdd = wm.add_watch('tmp', mask, rec=False)
+
+notifier.loop()
