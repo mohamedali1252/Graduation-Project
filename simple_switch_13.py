@@ -23,6 +23,10 @@ from ryu.lib.packet import ethernet
 from ryu.lib.packet import ether_types
 from ryu.lib import pcaplib
 from ryu.lib.packet import ipv4
+from ryu.lib.packet import tcp
+from ryu.lib.packet import udp
+from ryu.lib.packet import ethernet
+from ryu.lib.packet import ether_types
 from ryu.lib import hub
 
 counter = 0
@@ -37,6 +41,8 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.mac_to_port = {}
         self.pcap_writer = pcaplib.Writer(open('/home/kali/mypcap.pcap', 'wb'))
         self.datapaths = {}
+        self.ips = []
+        self.attack_mac = ""
         self.monitor_thread = hub.spawn(self.monitor)
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
@@ -75,7 +81,7 @@ class SimpleSwitch13(app_manager.RyuApp):
     def monitor(self):
         global dst
         while True:
-                hub.sleep(10)
+                hub.sleep(5)
                 for datapath in self.datapaths.values():
                         ofp = datapath.ofproto
                         ofp_parser = datapath.ofproto_parser
@@ -83,8 +89,43 @@ class SimpleSwitch13(app_manager.RyuApp):
                         match = ofp_parser.OFPMatch(eth_dst=dst)
                         req = ofp_parser.OFPFlowStatsRequest(datapath, 0,ofp.OFPTT_ALL,ofp.OFPP_ANY,ofp.OFPG_ANY,cookie, cookie_mask,match)
                         datapath.send_msg(req)
+                self.take_action()
     
-    
+    def unique(self,list1):
+    	unique_list = []
+    	for x in list1:
+    		if x not in unique_list:
+    			unique_list.append(x)
+    	return unique_list
+    def take_action(self):
+    	f = open("/home/kali/Desktop/ML/test.csv")
+    	lst = f.readlines()
+    	f.close()
+    	for i in lst:
+    		rule = i.strip()
+    		rule = rule.split(',')
+    		src_ip = rule[0]
+    		dst_ip = rule[1]
+    		if rule[2] =="attack":
+    			print(src_ip)
+    			for datapath in self.datapaths.values():
+    			        ofproto = datapath.ofproto
+    			        parser = datapath.ofproto_parser
+    			        
+    			        for st in self.ips:
+    			        	st_temp = st.split('#')
+    			        	mac_temp = st_temp[0]
+    			        	ip_temp = st_temp[1]
+    			        	if ip_temp == src_ip:
+    			        		self.attack_mac = mac_temp
+    			        if self.attack_mac == "":
+    			        	return
+    			        match = parser.OFPMatch(eth_src=self.attack_mac)
+    			        instruction = [parser.OFPInstructionActions(ofproto.OFPIT_CLEAR_ACTIONS, [])]
+    			        msg = parser.OFPFlowMod(datapath,0,priority = 1,command = ofproto.OFPFC_MODIFY,match = match,instructions = instruction)
+    			        datapath.send_msg(msg)
+    			        print("Host with mac address:",self.attack_mac," ,and ip:",src_ip," ,was blocked for attacking host with ip:",dst_ip)
+
     @set_ev_cls(ofp_event.EventOFPFlowStatsReply, MAIN_DISPATCHER)
     def stats_reply_handler(self, ev):
         global flag,dst
@@ -92,7 +133,8 @@ class SimpleSwitch13(app_manager.RyuApp):
                 dur = stat.duration_sec
                 if dur != 0:
                         ratio = stat.packet_count/dur
-                        if ratio > 1 and (not flag):
+                        print(ratio)
+                        if ratio > 80 and (not flag):
                                 flag = True 
                                 msg = ev.msg
                                 datapath = msg.datapath
@@ -122,6 +164,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         
 
         pkt = packet.Packet(msg.data)
+        ipv4_pkt = pkt.get_protocol(ipv4.ipv4)
         eth = pkt.get_protocols(ethernet.ethernet)[0]
 
         if eth.ethertype == ether_types.ETH_TYPE_LLDP:
@@ -129,8 +172,15 @@ class SimpleSwitch13(app_manager.RyuApp):
             return
         dst = eth.dst
         src = eth.src
-
+        if eth.ethertype == ether_types.ETH_TYPE_IP:
+	        ip = pkt.get_protocol(ipv4.ipv4)
+	        srcip = ip.src
+	        dstip = ip.dst
+	        self.ips.append(dst+"#"+dstip)
+	        self.ips.append(src+"#"+srcip)
+	        match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP,ipv4_src=srcip,ipv4_dst=dstip)
         dpid = format(datapath.id, "d").zfill(16)
+        self.ips = self.unique(self.ips)
         self.mac_to_port.setdefault(dpid, {})
 
         self.logger.info("packet in %s %s %s %s", dpid, src, dst, in_port)
@@ -168,3 +218,4 @@ class SimpleSwitch13(app_manager.RyuApp):
         out = parser.OFPPacketOut(datapath=datapath, buffer_id=msg.buffer_id,
                                   in_port=in_port, actions=actions, data=data)
         datapath.send_msg(out)
+     
