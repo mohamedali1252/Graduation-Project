@@ -272,9 +272,10 @@ def handle_connection(client, addr, port):
     is_guest_login = 0
     ##############################
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
+    s.connect(("0.0.0.0", 80))
     local_ip = s.getsockname()[0]
     s.close()
+    print(local_ip)
     ############################
     # at release
     protocol_type = "tcp"
@@ -284,7 +285,14 @@ def handle_connection(client, addr, port):
     land = 0
     dst_port = port
     dst_ip = local_ip
-    print (local_ip)
+    
+    ###################
+    s=str(client)
+    s=s.split('laddr',2)
+    s=s[1].split("'",2)
+    #print(s[1])
+    dst_ip = s[1]
+    
 
     if client_ip == local_ip or client_ip == "127.0.0.1" or client_ip == "127.0.0.2":
         if client_port == "22" or client_port == port:
@@ -314,6 +322,7 @@ def handle_connection(client, addr, port):
             raise Exception("No channel")
 
         chan.settimeout(120)  # time to end the ssh connection if there is no interaction
+       
 
         if transport.remote_mac != '':
             logger.info('Client mac ({},{}): {}'.format(client_ip, client_port, transport.remote_mac))
