@@ -1,15 +1,15 @@
 # HoneyPots:  
 1. SSH:  
 Secure shell protocol is a protocol to transfer data between two hosts in encrypted mode to protect the data from attackers.  
-The Code of the SSH HP is written in python, the requried modules is:  
-- **paramiko** using `pip install paramiko`
+The Code of the SSH HP is written in python, the requried modules is:   
+- **paramiko** using `pip install paramiko`  
 - **logging** using `pip install logging`  
 Before running SSH honeypot, a key must be generated using the following command:  
 `ssh-keygen -t rsa -f server.key` and then rename the output file using `mv server.key.pub server.pub`  
 After running the SSH honeypot **features.log** file will be created and file called **ssh_honeypot.log**, this file contain the logs about each connection to the honeypot.  
 Exapmle of the **features.log** file:  
 ![alt text](Images/ssh-ex.JPG)  
-The file called **ssh_honeypot.log** has the every command The attacker write in the shell  
+The file called **ssh_honeypot.log** has the every command The attacker write in the shell.  
 To Run the SSH HoneyPot you should use `python3 SSH.py` and you should have the folder named **fake_files**.  
 ![alt text](Images/ssh_honey.JPG)  
 2. FTP:  
@@ -42,17 +42,17 @@ so we used zeek tool to extract some of the features and then link the features 
 - You must have the file called **tablethree_editor.py** when running it.  
 To Run the script we will use the following command:  
 - `python3 editor.py`  
-Files called **con_feature.txt** and **ips.txt** will be created that have the ssh,ftp, and the smtp connections only and the IPs.  
-# Redis:
+Files called **con_feature.txt** and **ips.txt** will be created that have the ssh,ftp, and the smtp connections only and the IPs.   
+# Redis:  
 To install redis server we will use the following commands:  
-- ``
+- ``  
 - ``  
 To install redis module for python we will use the following command:  
 - `pip install redis`  
 There is a python script to upload the files **con_feature.txt** and **ips.txt** for the ML model.  
 We will use the python program called **store.py** to do that.  
 To run the file that store data on the database we will use the following command:  
-- `python3 store.py <ip-of-the-server-run-redis-server>`
+- `python3 store.py <ip-of-the-server-run-redis-server>`  
 On the side of the ML model we will use **readfrom_db.py** to save the data on the machine.  
 Two files called **con_feature.txt** and **ips.txt** will be created after running the script using:  
 - `python3 readfrom_db`  
