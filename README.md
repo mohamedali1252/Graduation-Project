@@ -12,7 +12,7 @@ Exapmle of the **features.log** file:
 The file called **ssh_honeypot.log** has the every command The attacker write in the shell  
 To Run the SSH HoneyPot you should use `python3 SSH.py` and you should have the folder named **fake_files**.  
 ![alt text](Images/ssh_honey.JPG)  
-2. FTP: 
+2. FTP:  
 File Transfer Protocol is a protocol to transfer files between machines on the same network.  
 The Code of the FTP HP is written in python, the requried modules is:  
 - **pickle** using `pip install pickle-mixin`  
@@ -23,7 +23,7 @@ Exapmle of the **ftplog.txt** file:
 ![alt text](Images/ftp-ex.JPG)  
 To Run the FTP Honeypot you should use  
 - `python3 ftppot.py`  
-3. SMTP:
+3. SMTP:  
 Simple Mail Transfer Protocol is a protocol for transfer the mails from one machine to other using  telnet.  
 
 # Zeek:  
@@ -42,15 +42,22 @@ so we used zeek tool to extract some of the features and then link the features 
 - You must have the file called **tablethree_editor.py** when running it.  
 To Run the script we will use the following command:  
 - `python3 editor.py`  
-A file called **con_feature.txt** will be created that have the ssh,ftp, and the smtp connections only.  
+Files called **con_feature.txt** and **ips.txt** will be created that have the ssh,ftp, and the smtp connections only and the IPs.  
 # Redis:
 To install redis server we will use the following commands:  
 - ``
-- ``
+- ``  
 To install redis module for python we will use the following command:  
-- `pip install redis`
+- `pip install redis`  
+There is a python script to upload the files **con_feature.txt** and **ips.txt** for the ML model.  
+We will use the python program called **store.py** to do that.  
+To run the file that store data on the database we will use the following command:  
+- `python3 store.py <ip-of-the-server-run-redis-server>`
+On the side of the ML model we will use **readfrom_db.py** to save the data on the machine.  
+Two files called **con_feature.txt** and **ips.txt** will be created after running the script using:  
+- `python3 readfrom_db`  
 # Machine Learning model:  
-The training Dataset for the model is KDD dataset which has
+
 
 
 
