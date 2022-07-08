@@ -7,6 +7,8 @@ The Code of the SSH HP is written in python, the requried modules is:
 Before running SSH honeypot, a key must be generated using the following command:  
 `ssh-keygen -t rsa -f server.key` and then rename the output file using `mv server.key.pub server.pub`  
 When running the SSH honeypot **features.log** file will be created, this file contain the logs about each connection to the honeypot.  
+Exapmle of the **features.log** file:  
+![alt text](Images/ssh-ex.JPG)  
 
 
 
