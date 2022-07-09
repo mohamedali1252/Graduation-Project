@@ -143,40 +143,43 @@ def netstat():
 
 
 def handle_cmd(cmd, chan, ip, port):
+    commands = ["ls","pwd","ping","echo","cat","ifconfig","ip a","uname","whoami","hostname","route","ps","ps aux","netstat","su root"]
     response = ""
     if cmd.startswith("ls"):
         response = Ls(cmd)
-    if cmd.startswith("pwd"):
+    elif cmd.startswith("pwd"):
         response = "/home/root"
-    if cmd.startswith("ping"):
+    elif cmd.startswith("ping"):
         response = ping(cmd)
-    if cmd.startswith("echo"):
+    elif cmd.startswith("echo"):
         command = cmd
         command = command.split(" ")
         response = command[1]
-    if cmd.startswith("cat"):
+    elif cmd.startswith("cat"):
         response = cat(cmd)
-    if cmd.startswith("ifconfig"):
+    elif cmd.startswith("ifconfig"):
         response = ifconfig()
-    if cmd.startswith("ip a"):
+    elif cmd.startswith("ip a"):
         response = ipa()
-    if cmd.startswith("uname"):
+    elif cmd.startswith("uname"):
         response = uname()
-    if cmd.startswith("whoami"):
+    elif cmd.startswith("whoami"):
         response = whoami()
-    if cmd.startswith("hostname"):
+    elif cmd.startswith("hostname"):
         response = hostname()
-    if cmd.startswith("route"):
+    elif cmd.startswith("route"):
         response = route()
-    if cmd.startswith("ps"):
+    elif cmd.startswith("ps"):
         response = ps()
-    if cmd.startswith("ps aux"):
+    elif cmd.startswith("ps aux"):
         response = psaux()
-    if cmd.startswith("netstat"):
+    elif cmd.startswith("netstat"):
         response = netstat()
     #############################
-    if cmd.startswith("su root"):
+    elif cmd.startswith("su root"):
         response = "su: Authentication failure"
+    else:
+        response = "%command not found"
     if response != '':
         logger.info('Response from honeypot ({},{}): '.format(ip, port, response))
         response = response + "\r\n"
