@@ -50,18 +50,14 @@ class Window(QtWidgets.QMainWindow):
         Args:
             info (list[list[str]]): A list of list containing the info, each inner list is for 1 info type
         """
-        # Each time this method is called the previous Scroll_area (and its children) is replaced with a new one
-        # The old one will be garbage collect
-        # This is way quicker then keeping the old column and replacing each item in it
-
         if self.main_layout.count() > 1:
             self.main_layout.itemAt(1).widget().setParent(None)
 
         scroll = Scroll_area()
         self.main_layout.addWidget(scroll)
 
-        titles = ["date", "time", "source IP", "destination IP",
-                  "attack type", "protocol type", "action taken"]
+        titles = ["Date", "Time", "Source IP", "Destination IP",
+                  "Attack Type", "Protocol Type", "Action Taken"]
 
         for index, title in enumerate(titles):
             corresponding_info = infos[index]

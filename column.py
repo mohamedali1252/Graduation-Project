@@ -17,11 +17,9 @@ class Column(QtWidgets.QLabel):
         Args:
             title (str): The title of the column
         """
-        # Since the column is technicly a QLabel we have to use this trick to fully display it
         self.setMinimumHeight(len(self.info)*35)
         self.setStyleSheet(
             f"background-color:{global_var.COLUMN_COLOR};border-radius:10px")
-        # Thanks to this, the app respond well to different size !
         self.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding,
                            QtWidgets.QSizePolicy.Policy.Expanding)
         title_display = QtWidgets.QLabel(title)
