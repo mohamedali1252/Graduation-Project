@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 from tensorflow import keras
+import sys
+import os
 
 
 def classify (inputfilepath):
@@ -158,13 +160,23 @@ def classify (inputfilepath):
     labels = ['back', 'ipsweep', 'neptune', 'nmap', 'normal', 'other',
               'portsweep', 'satan', 'smurf', 'teardrop', 'warezclient']
 
-    model = keras.models.load_model('./my_model.h5')
+    model = keras.models.load_model('/home/kali/Desktop/HoneyPot-Neural-network-classifier/my_model.h5')
     pred = model.predict(fin)
     result = np.argmax(pred, axis=1)
-    for r in result:
-        print(labels[r])
+    f = open("/home/kali/Desktop/HoneyPot-Neural-network-classifier/ips.txt", "r")
+    to_monitor = open("/home/kali/Desktop/ML/test.csv", "w")
+    lines = f.readlines()
+    
+    #f = open("/home/kali/Desktop/ML/test.csv")
+    
+    i=0
+    for r in result :
+    	line = lines[i].split('\n')
+    	lines[i] = line[0]
+    	to_monitor.write(lines[i] + ','+labels[r] +'\n')
+    	print(lines[i] + ','+labels[r] )
+    	i=i+1
 
-
-
-
-classify('trying.csv')
+classify('/home/kali/Desktop/HoneyPot-Neural-network-classifier/dika.csv')
+os.system('python /home/kali/Desktop/HoneyPot-Neural-network-classifier/readfrom_db.py')
+os.system('redis-cli flushdb')
