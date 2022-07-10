@@ -44,6 +44,8 @@ After capturing the traffic, we will use zeek script called **extract.zeek**that
 - `zeek -r ntraffic.pcap extract.zeek -C > conn.list`  
 After getting **conn.list** file, we must sort it with the id of the connection using:  
 - `sort -n conn.list > conn_sort.list`  
+Exapmle of the **conn_sort.list** file:  
+![alt text](src/conn_sort.JPG) 
 # Feature Extraction:  
 *It exists on the Host*  
 The training Dataset for the model is KDD dataset which has 41 features.
@@ -52,7 +54,8 @@ so we used zeek tool to extract some of the features and then link the features 
 - You must have the file called **tablethree_editor.py** when running it.  
 To Run the script we will use the following command:  
 - `python3 editor.py`  
-Files called **con_feature.txt** and **ips.txt** will be created that have the ssh,ftp, and the smtp connections only and the IPs.   
+Files called **con_feature.txt** and **ips.txt** will be created that have the ssh,ftp, and the smtp connections only and the IPs.  
+
 # Redis:  
 *It exists on the Host and the controller*  
 To install redis server we will use the following commands:  
@@ -67,6 +70,7 @@ To run the file that store data on the database we will use the following comman
 On the side of the ML model we will use **readfrom_db.py** to save the data on the machine.  
 Two files called **con_feature.txt** and **ips.txt** will be created after running the script using:  
 - `python3 readfrom_db`  
+
 
 # Mininet:  
 *It exists on the Host*  
@@ -107,6 +111,12 @@ Now you can run the classifier using:
 - `python3 classifier.py`  
 
 
-
-
-
+# UI:  
+*It exists on the contoller*  
+You must have the following modules:  
+- pyqt6, you can install it using `pip install pyqt6`.  
+Now you can run the UI using:
+- `python3 main.py`
+There is optional info inside the file called "global_var.py" you will find different variable with explicit names.  
+Exapmle of the UI:  
+![alt text](src/UI.png) 
