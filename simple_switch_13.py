@@ -93,15 +93,15 @@ class SimpleSwitch13(app_manager.RyuApp):
                         match = ofp_parser.OFPMatch(eth_dst=dst)
                         req = ofp_parser.OFPFlowStatsRequest(datapath, 0,ofp.OFPTT_ALL,ofp.OFPP_ANY,ofp.OFPG_ANY,cookie, cookie_mask,match)
                         datapath.send_msg(req)
-                file_size=os.path.getsize('/home/kali/Desktop/ML/test.csv') 
+                file_size=os.path.getsize('/home/kali/Desktop/ML/test.csv')   #check the directory on you machine 
                 if file_size == 0:
                         #os.system("pip install tensorflow")
-                        os.system("python /home/kali/Desktop/HoneyPot-Neural-network-classifier/classifier.py")
+                        os.system("python /home/kali/Desktop/HoneyPot-Neural-network-classifier/classifier.py") #check the directory on you machine
                         print("da5al fel if /n ****************************")        
                 self.take_action()
                 #f=open("/home/kali/Desktop/ML/test.csv","w")
                 #f.close()
-                with open("/home/kali/Desktop/ML/test.csv","w") as f:
+                with open("/home/kali/Desktop/ML/test.csv","w") as f: #check the directory on you machine
                         pass        
     
     def unique(self,list1):
@@ -111,7 +111,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                 unique_list.append(x)
         return unique_list
     def take_action(self):
-        f = open("/home/kali/Desktop/ML/test.csv")
+        f = open("/home/kali/Desktop/ML/test.csv") #check the directory on you machine
         lst = f.readlines()
         f.close()
         for i in lst:
