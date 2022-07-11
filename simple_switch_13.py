@@ -31,24 +31,36 @@ from ryu.lib import hub
 import array
 import os
 import sys
+import datetime
+from time import strftime
+import time
+import csv
 
 
 counter = 0
 flag = False
 dst = "00:00:00:00:00:02"
+UI_path = "/home/kali/Downloads/Graduation_Project-UI/sample.csv"
+ML_path = "/home/kali/Desktop/ML/test.csv"
+blocked = []
+
+
 
 class SimpleSwitch13(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
 
     def __init__(self, *args, **kwargs):
+        global UI_path
+        self.sample=[]
         super(SimpleSwitch13, self).__init__(*args, **kwargs)
         self.mac_to_port = {}
-        self.pcap_writer = pcaplib.Writer(open('/home/kali/mypcap.pcap', 'wb'))
         self.datapaths = {}
         self.ips = []
         self.attack_mac = ""
         self.monitor_thread = hub.spawn(self.monitor)
+        self.f = open(UI_path,'w') #the file to UI
 
+        
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):
         datapath = ev.msg.datapath
@@ -83,9 +95,9 @@ class SimpleSwitch13(app_manager.RyuApp):
         datapath.send_msg(mod)
     
     def monitor(self):
-        global dst
+        global dst,ML_path
         while True:
-                hub.sleep(20)
+                hub.sleep(5)
                 for datapath in self.datapaths.values():
                         ofp = datapath.ofproto
                         ofp_parser = datapath.ofproto_parser
@@ -93,16 +105,17 @@ class SimpleSwitch13(app_manager.RyuApp):
                         match = ofp_parser.OFPMatch(eth_dst=dst)
                         req = ofp_parser.OFPFlowStatsRequest(datapath, 0,ofp.OFPTT_ALL,ofp.OFPP_ANY,ofp.OFPG_ANY,cookie, cookie_mask,match)
                         datapath.send_msg(req)
-                file_size=os.path.getsize('/home/kali/Desktop/ML/test.csv')   #check the directory on you machine 
+                file_size=os.path.getsize(ML_path) 
                 if file_size == 0:
                         #os.system("pip install tensorflow")
-                        os.system("python /home/kali/Desktop/HoneyPot-Neural-network-classifier/classifier.py") #check the directory on you machine
+                        os.system('python /home/kali/Desktop/HoneyPot-Neural-network-classifier/readfrom_db.py')
+                        os.system("python /home/kali/Desktop/HoneyPot-Neural-network-classifier/classifier.py")
                         print("da5al fel if /n ****************************")        
-                self.take_action()
-                #f=open("/home/kali/Desktop/ML/test.csv","w")
-                #f.close()
-                with open("/home/kali/Desktop/ML/test.csv","w") as f: #check the directory on you machine
-                        pass        
+                        self.take_action()
+                        
+                        #with open("/home/kali/Desktop/ML/test.csv","w") as f:
+                         #       pass    
+                #os.system("python3 /home/kali/UI/main.py")
     
     def unique(self,list1):
         unique_list = []
@@ -111,14 +124,30 @@ class SimpleSwitch13(app_manager.RyuApp):
                 unique_list.append(x)
         return unique_list
     def take_action(self):
-        f = open("/home/kali/Desktop/ML/test.csv") #check the directory on you machine
-        lst = f.readlines()
-        f.close()
+        global ML_path,UI_path
+        self.f = open(UI_path,'a') #the file to UI
+        m = open(ML_path,'r')
+        lst = m.readlines()
+        m.close()
         for i in lst:
             rule = i.strip()
             rule = rule.split(',')
             src_ip = rule[0]
             dst_ip = rule[1]
+            time = rule[3]
+            date = rule[4]
+            honeypot = rule[5]
+            rows = [[time,date,src_ip,dst_ip,rule[2],honeypot]]
+            sample = time+date+src_ip+dst_ip+rule[2]+honeypot
+            if (sample not in self.sample):
+               csvwriter = csv.writer(self.f)
+               csvwriter.writerows(rows)   
+               self.sample.append(sample)
+            
+            #f.write(time,",",date,",",src_ip,",",dst_ip,",",rule[2],",",honeypot)
+            #scr_ip,dst_ip,attack_type,time,date,honeypot
+            print ("before if condition")
+            print(rule[2])
             if rule[2] !="normal":
                 print(src_ip)
                 for datapath in self.datapaths.values():
@@ -137,29 +166,49 @@ class SimpleSwitch13(app_manager.RyuApp):
                         instruction = [parser.OFPInstructionActions(ofproto.OFPIT_CLEAR_ACTIONS, [])]
                         msg = parser.OFPFlowMod(datapath,0,priority = 1,command = ofproto.OFPFC_MODIFY,match = match,instructions = instruction)
                         datapath.send_msg(msg)
-                        print("Host with mac address:",self.attack_mac," ,and ip:",src_ip," ,was blocked for attacking host with ip:",dst_ip)
-
+                        print("**********************************")
+        self.f.close()
     @set_ev_cls(ofp_event.EventOFPFlowStatsReply, MAIN_DISPATCHER)
     def stats_reply_handler(self, ev):
-        global flag,dst
+        global flag,dst,UI_path,blocked
+        self.f = open(UI_path,'a') #the file to UI
+        src_ip = ""
+        dst_ip = ""
         for stat in ev.msg.body:
                 dur = stat.duration_sec
                 if dur != 0:
                         ratio = stat.packet_count/dur
                         print(ratio)
-                        if ratio > 80 and (not flag):
+                        if ratio > 100 and (stat.match['eth_src'] not in blocked):
                                 flag = True 
                                 msg = ev.msg
                                 datapath = msg.datapath
                                 ofproto = datapath.ofproto
                                 parser = datapath.ofproto_parser
-                                match = parser.OFPMatch(eth_dst=dst)
+                                match = parser.OFPMatch(eth_src=stat.match['eth_src'])
                                 instruction = [parser.OFPInstructionActions(ofproto.OFPIT_CLEAR_ACTIONS, [])]
                                 msg = parser.OFPFlowMod(datapath,0,priority = 1,command = ofproto.OFPFC_MODIFY,match = match,instructions = instruction)
                                 datapath.send_msg(msg)
+                                for st in self.ips:
+                                        st_temp = st.split('#')
+                                        mac_temp = st_temp[0]
+                                        ip_temp = st_temp[1]
+                                        if mac_temp == stat.match['eth_src']:
+                                                src_ip = ip_temp
+                                        elif mac_temp == stat.match['eth_dst']:
+                                                dst_ip = ip_temp
+                                t = time.time()
+                                h = time.localtime(t + 6 * 60 * 60)
+                                time_string = time.strftime("%d/%b/%Y,%H:%M:%S", h)
+                                time_after = time_string.split(",")
+                                date = time_after[0]
+                                ti = time_after[1]
+                                rows = [[ date,ti,src_ip,dst_ip,'DOS' ,'Controller' ]]
+                                csvwriter = csv.writer(self.f)
+                                csvwriter.writerows(rows)
                                 self.logger.info("Time limit Exceed DOS attack")
-
-    
+                                blocked.append(stat.match['eth_src'])
+        self.f.close()
     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
     def _packet_in_handler(self, ev):
         global counter
@@ -173,7 +222,6 @@ class SimpleSwitch13(app_manager.RyuApp):
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
         in_port = msg.match['in_port']
-        self.pcap_writer.write_pkt(ev.msg.data)
         
 
         pkt = packet.Packet(array.array('B', msg.data))
