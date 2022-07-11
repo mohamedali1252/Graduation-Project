@@ -10,31 +10,34 @@ from keras.layers import Dense, Dropout
 init_train_df = pd.read_csv('kdd_train.csv')
 init_test_df = pd.read_csv('kdd_test.csv')
 
+#Data preprocessing
+#Here we aim to remove the issues we found in the dataset in the analysis phase 
+#First we will remove the skew in the dataset by downsample the normal and neptune observations (records)
+
 random_state = 42
 
 proc_train_df = init_train_df.copy()
 proc_test_df = init_test_df.copy()
-
+# get the slice of our train set with all normal observations
 proc_train_normal_slice = proc_train_df[proc_train_df['labels'] == 'normal'].copy()
+# get the slice of our train set with all neptune observations
 proc_train_neptune_slice = proc_train_df[proc_train_df['labels'] == 'neptune'].copy()
-
+#do the same thing for the test dataset as the skew was found in both datasets
 proc_test_normal_slice = proc_test_df[proc_test_df['labels'] == 'normal'].copy()
 proc_test_neptune_slice = proc_test_df[proc_test_df['labels'] == 'neptune'].copy()
-
+#Downsample neptune and normal observations to 5000 observation in train dataset
 proc_train_normal_sampled = proc_train_normal_slice.sample(n=5000, random_state=random_state)
 proc_train_neptune_sampled = proc_train_neptune_slice.sample(n=5000, random_state=random_state)
-
+#Downsample neptune and normal observations to 1000 observation in test dataset
 proc_test_normal_sampled = proc_test_normal_slice.sample(n=1000, random_state=random_state)
 proc_test_neptune_sampled = proc_test_neptune_slice.sample(n=1000, random_state=random_state)
 
-
+#Then we will drop the unsampled normal and neptune slices from dataframes in both datasets
 proc_train_df.drop(proc_train_df.loc[proc_train_df['labels']=='normal'].index, inplace=True)
 proc_train_df.drop(proc_train_df.loc[proc_train_df['labels']=='neptune'].index, inplace=True)
-
-
 proc_test_df.drop(proc_test_df.loc[proc_test_df['labels']=='normal'].index, inplace=True)
 proc_test_df.drop(proc_test_df.loc[proc_test_df['labels']=='neptune'].index, inplace=True)
-
+#lastly we will add the downsampled slices to dataframes of train and test datasets
 proc_train_df = pd.concat([proc_train_df, proc_train_normal_sampled, proc_train_neptune_sampled], axis=0)
 proc_test_df = pd.concat([proc_test_df, proc_test_normal_sampled, proc_test_neptune_sampled], axis=0)
 
