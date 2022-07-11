@@ -171,12 +171,15 @@ def classify (inputfilepath):
     
     i=0
     for r in result :
-    	line = lines[i].split('\n')
-    	lines[i] = line[0]
-    	to_monitor.write(lines[i] + ','+labels[r] +'\n')
-    	print(lines[i] + ','+labels[r] )
+    	line = lines[i].rstrip('\n')
+    	line_after = line.split(',')
+    	ay7aga = line_after[0] + "," +  line_after[1] + "," + labels[r] +"," + line_after[2] + "," +line_after[3] + "," +line_after[4] 
+    	to_monitor.write(ay7aga +'\n')
+    	print(ay7aga)
     	i=i+1
 
-classify('/home/kali/Desktop/HoneyPot-Neural-network-classifier/dika.csv')
-os.system('python /home/kali/Desktop/HoneyPot-Neural-network-classifier/readfrom_db.py')
-os.system('redis-cli flushdb')
+#os.system('python /home/kali/Desktop/HoneyPot-Neural-network-classifier/readfrom_db.py')
+file_size=os.path.getsize('/home/kali/Desktop/HoneyPot-Neural-network-classifier/dika.csv') 
+if file_size != 0: 
+	classify('/home/kali/Desktop/HoneyPot-Neural-network-classifier/dika.csv')
+#os.system('redis-cli flushdb')
