@@ -1,5 +1,5 @@
 # Design:  
-Intelligence HoneyPots on SDN:  
+Intelligent HoneyPot on SDN:  
 Our design is having 3 hosts, openflow switch,RYU controller and Redis server  
 ![alt text](src/System.JPG)  
 One of the hosts have the HoneyPots, capture the traffic, feature extraction and upload it to Redis server.  
