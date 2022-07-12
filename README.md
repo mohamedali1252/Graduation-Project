@@ -34,7 +34,7 @@ The Code of the FTP HoneyPot is written in python.<br>
 <h2>The Log file</h2>
 After running FTP HoneyPot file named **ftplog.txt** will be created and it has the information about the each connection has occurred.  
 Exapmle of the **ftplog.txt** file:  
-![ftp](src/ftp-ex.JPG)  
+ <img src="src/ftp-ex.JPG">
  It is in CSV format as each connection represents a line in the file where each line .i.e connection consists of a set of comma separated features <br>these are a subset of the NSL-KDD dataset Features.
 <br>
 <h2>To Run the FTP Honeypot: </h2> you should use  
@@ -45,31 +45,39 @@ Exapmle of the **ftplog.txt** file:
 
   <li><b>Help:</b><br> Help command is used to show the available commands that are supported on the FTP server.
 
- <img src="src/help.PNG" alt="Help command">
+ <img src="src/help.PNG">
  </li>
   
 
   <li><b>FEAT:</b><br>An alternative command to HELP to show the available features.
-  ![feat](src/feat.PNG)
+   <img src="src/feat.PNG">
   </li>
 </li>
   <li><b>LS:</b><br>A Command used to list the content of the current working directory excluding the hidden ones.
-  ![](src/ls.PNG) ![](src/ls-la.PNG)
+   <img src="src/ls.PNG">
   </li>
     <li><b>LS -la:</b><br>A Command used to list the content of the current working directory including all hidden files and subdirectories.
+        <img src="src/ls-la.PNG">
   </li>
      <li><b>MKDIR:</b><br>A command used to make a new directory.
+          <img src="src/mkdir.PNG">
   </li>
-  <li><b>CWD:</b><br>A command used to change the current working directory .i.e to navigate to another one.</li>
-   <li><b>PWD:</b><br>A command used to print the current working directory.</li>
-   <li><b>PUT:</b><br>A command used to upload files to the server.</li>
-   <li><b>PUT:</b><br>A command used to upload files to the server.<br><b>Note: </b> we simulated the case of uploading hidden files too.</li>
-   <li><b>CHMOD:</b><br>A command used to change the permissions of a file. This command needs root privileges.</li>
-   <li><b>SU or ROOT:</b><br>A command used to change to root privileges.</li>
-   <li><b>ASCII:</b><br>A command used to switch to ASCII mode to transfer files.</li>
-   <li><b>BINARY:</b><br>A command used to switch to BINARY mode to transfer files.</li>
+  <li><b>CWD:</b><br>A command used to change the current working directory .i.e to navigate to another one.
+  <img src="src/cwd.PNG">
+  </li>
+   <li><b>PWD:</b><br>A command used to print the current working directory.  <img src="pwd/help.PNG"></li>
+
+   <li><b>PUT:</b><br>A command used to upload files to the server.<img src="src/put.PNG"> <br><b>Note: </b> we simulated the case of uploading hidden files too.
+    <img src="src/putdot.PNG">
+    </li>
+   <li><b>CHMOD:</b><br>A command used to change the permissions of a file. This command needs root privileges.
+     <img src="src/chmod.PNG">
+   </li>
+   <li><b>SU or ROOT:</b><br>A command used to change to root privileges. <img src="src/root.PNG"></li>
+   <li><b>ASCII:</b><br>A command used to switch to ASCII mode to transfer files.  <img src="src/ascii.PNG"></li>
+   <li><b>BINARY:</b><br>A command used to switch to BINARY mode to transfer files. <img src="src/binary.PNG"></li>
    <li><b>GET:</b><br>A command used to Download files from the ftp server.</li>
-   <li><b>QUIT:</b><br>A command used to end the session and disconnect from the FTP server.</li>
+   <li><b>QUIT:</b><br>A command used to end the session and disconnect from the FTP server. <img src="src/quit.PNG"></li>
    <li><b>BYE:</b><br>An alternative command to the Quit command.</li>
   
   
