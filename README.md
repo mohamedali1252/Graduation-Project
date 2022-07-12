@@ -48,11 +48,11 @@ Help command is used to show the available commands that are supported on the FT
 (src/help.PNG)
 </li>
   <li><b>FEAT:</b><br>An alternative command to HELP to show the available features.
-  (src/feat.PNG)
+  ![feat](src/feat.PNG)
   </li>
 </li>
   <li><b>LS:</b><br>A Command used to list the content of the current working directory excluding the hidden ones.
-  (src/ls.PNG) (src/ls-la.PNG)
+  ![](src/ls.PNG) ![](src/ls-la.PNG)
   </li>
     <li><b>LS -la:</b><br>A Command used to list the content of the current working directory including all hidden files and subdirectories.
   </li>
