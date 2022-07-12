@@ -45,7 +45,7 @@ Exapmle of the **ftplog.txt** file:
 
   <li><b>Help:</b><br> Help command is used to show the available commands that are supported on the FTP server.
   <ul>
-  <li> ![chmod](src/help.PNG)</li>
+  <li> <img src="src/help.PNG" alt="Help command"></li>
   </ul> </li>
   
 
