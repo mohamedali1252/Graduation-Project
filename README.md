@@ -20,17 +20,26 @@ Exapmle of the **features.log** file:
 The file called **ssh_honeypot.log** has the every command The attacker write in the shell.  
 To Run the SSH HoneyPot you should use `python3 SSH.py` and you should have the folder named **fake_files**.  
 ![ssh honeypot](src/ssh_honey.JPG)  
-2. FTP:  
-File Transfer Protocol is a protocol to transfer files between machines on the same network.  
-The Code of the FTP HP is written in python, the requried modules is:  
+<h1>FTP Honeypot</h1> 
+File Transfer Protocol is a protocol to transfer files between machines on the same network.
+This honeypot simulates the FTP service from the server side. It simulates both a legitimate user session that connects using a username and a password and also it simulates a guest session i.e anonymous session.
+
+The Code of the FTP HP is written in python.<br>
+<h2>The Required Modules</h2>
+
 - **pickle** using `pip install pickle-mixin`  
 - **twisted** using `pip install Twisted`  
 - **pyshark** using `pip install pyshark`  
-After running FTP HP file named **ftplog.txt** will be created and it has the information about the each connection has occurred.  
+
+After running FTP HoneyPot file named **ftplog.txt** will be created and it has the information about the each connection has occurred.  
 Exapmle of the **ftplog.txt** file:  
 ![ftp](src/ftp-ex.JPG)  
+<br>
+<h2>The Log file</h2> is in csv format as each connection represents a line in the file where each line .i.e connection consists of a set of comma separated features <br>these are a subset of the NSL-KDD dataset Features.
+<br>
 To Run the FTP Honeypot you should use  
 - `python3 ftppot.py`  
+<br>
 3. SMTP:  
 Simple Mail Transfer Protocol is a protocol for transfer the mails from one machine to other using  telnet.  
 
