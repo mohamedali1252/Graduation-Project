@@ -62,7 +62,7 @@ RESPONSE = {
     LOGIN_SUCCEED: b'230 User logged in\nRemote System type is UNIX\nusing binary mode to transfer files',
     LOGIN_ANONYMOUS_SUCCEED: b'230 User anonymous logged in\nRemote System type is UNIX\nusing binary mode to transfer files',
     REQ_ACTN_NOT_TAKEN: b'550 Requested action not taken: %s',
-    HELP_MSG: b'214-The following commands are recognized.\nUSER            PASS            CWD\nPWD             QUIT            BYE             \nLS              ASCII           BINARY\nPUT             SITE            SU\nmkdir            CHMOD\n214 Help Ok.'
+    HELP_MSG: b'214-The following commands are recognized.\nUSER            PASS            CWD\nPWD             QUIT            BYE             \nLS              ASCII           BINARY\nPUT             SITE            SU\nmkdir           CHMOD\n214 Help Ok.'
     ,
     ASCII_COMMAND: b'200 Type set to ASCII',
     BINARY_COMMAND: b'200 Type set to BINARY',
@@ -284,6 +284,9 @@ class FTPpot(basic.LineOnlyReceiver, policies.TimeoutMixin):
                 if self.root_shell == 1:
                     self.num_root += 1
                 return self.ftp_HELP()
+                
+            elif cmd == b'FEAT':
+                return self.ftp_HELP()
 
             elif cmd == b'ASCII':
                 if self.root_shell == 1:
@@ -294,6 +297,14 @@ class FTPpot(basic.LineOnlyReceiver, policies.TimeoutMixin):
                 if self.root_shell == 1:
                     self.num_root += 1
                 return self.ftp_BINARY()
+                
+                
+            elif cmd == b'GET':
+                if self.root_shell == 1:
+                    self.num_root += 1
+                self.hot +=1
+                self.is_hot_login = 1
+                self.reply(PUT_COMMAND, 1)
 
             elif cmd == b'BYE':
                 if self.root_shell == 1:
@@ -414,7 +425,7 @@ class FTPpot(basic.LineOnlyReceiver, policies.TimeoutMixin):
             # self.sendLine(b'230 User anonymous logged in\nRemote System type is UNIX\nusing binary mode to transfer files')
             # self.transport.write(b'ftp> ')
             self.reply(LOGIN_ANONYMOUS_SUCCEED, 1)
-        elif bool(self.isuser) and (password.decode("utf8") == 'adminadmin' or password.decode("utf8") == 'root' or password.decode("utf8") == 'password'):
+        elif bool(self.isuser) and (password.decode("utf8") == 'adminadmin' or password.decode("utf8") == 'root' or password.decode("utf8") == 'password' or password.decode("utf8") == '12345678'):
             self.loggedin = 1
 
             # return LOGIN_SUCCEED
