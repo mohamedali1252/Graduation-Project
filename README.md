@@ -49,8 +49,7 @@ Exapmle of the **ftplog.txt** file:
  </li>
   
 
-  <li><b>FEAT:</b><br>An alternative command to HELP to show the available features.
-   <img src="src/feat.PNG">
+  <li><b>FEAT:</b><br>An alternative command to HELP to show the available features.<br> <img src="src/feat.PNG">
   </li>
 </li>
   <li><b>LS:</b><br>A Command used to list the content of the current working directory excluding the hidden ones.
@@ -65,7 +64,7 @@ Exapmle of the **ftplog.txt** file:
   <li><b>CWD:</b><br>A command used to change the current working directory .i.e to navigate to another one.
   <img src="src/cwd.PNG">
   </li>
-   <li><b>PWD:</b><br>A command used to print the current working directory.<br>  <img src="pwd/help.PNG"></li>
+   <li><b>PWD:</b><br>A command used to print the current working directory.<br>  <img src="src/pwd.PNG"></li>
 
    <li><b>PUT:</b><br>A command used to upload files to the server.<br><img src="src/put.PNG"> <br><b>Note: </b> we simulated the case of uploading hidden files too.
     <br><img src="src/putdot.PNG">
