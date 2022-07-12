@@ -30,12 +30,13 @@ The Code of the FTP HoneyPot is written in python.<br>
 - **pickle** using `pip install pickle-mixin`  
 - **twisted** using `pip install Twisted`  
 - **pyshark** using `pip install pyshark`  
-
+<br>
+<h2>The Log file</h2>
 After running FTP HoneyPot file named **ftplog.txt** will be created and it has the information about the each connection has occurred.  
 Exapmle of the **ftplog.txt** file:  
 ![ftp](src/ftp-ex.JPG)  
 <br>
-<h2>The Log file</h2> It is in CSV format as each connection represents a line in the file where each line .i.e connection consists of a set of comma separated features <br>these are a subset of the NSL-KDD dataset Features.
+ It is in CSV format as each connection represents a line in the file where each line .i.e connection consists of a set of comma separated features <br>these are a subset of the NSL-KDD dataset Features.
 <br>
 <h2>To Run the FTP Honeypot: </h2> you should use  
 - `python3 ftppot.py`  
@@ -44,11 +45,14 @@ Exapmle of the **ftplog.txt** file:
 <ol>
   <li><b>Help:</b><br>
 Help command is used to show the available commands that are supported on the FTP server.
+(src/help.PNG)
 </li>
   <li><b>FEAT:</b><br>An alternative command to HELP to show the available features.
+  (src/feat.PNG)
   </li>
 </li>
   <li><b>LS:</b><br>A Command used to list the content of the current working directory excluding the hidden ones.
+  (src/ls.PNG) (src/ls-la.PNG)
   </li>
     <li><b>LS -la:</b><br>A Command used to list the content of the current working directory including all hidden files and subdirectories.
   </li>
