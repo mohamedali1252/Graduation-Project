@@ -42,7 +42,7 @@ Exapmle of the **ftplog.txt** file:
  It is in CSV format as each connection represents a line in the file where each line .i.e connection consists of a set of comma separated features <br>these are a subset of the NSL-KDD dataset Features.
 <br>
 <h2>To Run the FTP Honeypot: </h2> you should use  
-- `python3 ftppot.py`  
+- **python3** `python3 ftppot.py`  
 <br>
 <h2>Commands Supported by the FTP Honeypot:</h2>
 <ol>
