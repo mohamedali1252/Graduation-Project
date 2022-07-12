@@ -59,10 +59,15 @@ Files called **con_feature.txt** and **ips.txt** will be created that have the s
 # Redis:  
 *It exists on the Host and the controller*  
 To install redis server we will use the following commands:  
-- ``  
-- ``  
+- `curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg`  
+- `echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list`  
+- `sudo apt-get update`
+- `sudo apt-get install redis`  
 To install redis module for python we will use the following command:  
 - `pip install redis`  
+To run redis server on your host:  
+- `redis-server --protected-mode no`  
+
 There is a python script to upload the files **con_feature.txt** and **ips.txt** for the ML model.  
 We will use the python program called **store.py** to do that.  
 To run the file that store data on the database we will use the following command:  
