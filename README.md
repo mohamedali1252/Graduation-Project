@@ -35,7 +35,6 @@ The Code of the FTP HoneyPot is written in python.<br>
 After running FTP HoneyPot file named **ftplog.txt** will be created and it has the information about the each connection has occurred.  
 Exapmle of the **ftplog.txt** file:  
 ![ftp](src/ftp-ex.JPG)  
-<br>
  It is in CSV format as each connection represents a line in the file where each line .i.e connection consists of a set of comma separated features <br>these are a subset of the NSL-KDD dataset Features.
 <br>
 <h2>To Run the FTP Honeypot: </h2> you should use  
@@ -43,10 +42,13 @@ Exapmle of the **ftplog.txt** file:
 <br>
 <h2>Commands Supported by the FTP Honeypot:</h2>
 <ol>
-  <li><b>Help:</b><br>
-Help command is used to show the available commands that are supported on the FTP server.
-(src/help.PNG)
-</li>
+
+  <li><b>Help:</b><br> Help command is used to show the available commands that are supported on the FTP server.
+  <ul>
+  <li> ![chmod](src/help.PNG)</li>
+  </ul> </li>
+  
+
   <li><b>FEAT:</b><br>An alternative command to HELP to show the available features.
   ![feat](src/feat.PNG)
   </li>
