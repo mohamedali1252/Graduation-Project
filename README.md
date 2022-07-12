@@ -31,6 +31,10 @@ The Code of the FTP HoneyPot is written in python.<br>
 - **twisted** using `pip install Twisted`  
 - **pyshark** using `pip install pyshark`  
 <br>
+<h2>To Connect to FTP honeypot</h2>
+<img src="src/scc1.PNG">
+<img src="src/scc2.PNG">
+
 <h2>The Log file</h2>
 After running FTP HoneyPot file named **ftplog.txt** will be created and it has the information about the each connection has occurred.  
 Exapmle of the **ftplog.txt** file:  
