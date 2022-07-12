@@ -56,7 +56,7 @@ Exapmle of the **ftplog.txt** file:
   <li><b>LS:</b><br>A Command used to list the content of the current working directory excluding the hidden ones.
    <img src="src/ls.PNG">
   </li>
-    <li><b>LS -la:</b><br>A Command used to list the content of the current working directory including all hidden files and subdirectories.
+    <li><b>LS -la:</b><br>A Command used to list the content of the current working directory including all hidden ones.
         <img src="src/ls-la.PNG">
   </li>
      <li><b>MKDIR:</b><br>A command used to make a new directory.
@@ -65,19 +65,19 @@ Exapmle of the **ftplog.txt** file:
   <li><b>CWD:</b><br>A command used to change the current working directory .i.e to navigate to another one.
   <img src="src/cwd.PNG">
   </li>
-   <li><b>PWD:</b><br>A command used to print the current working directory.  <img src="pwd/help.PNG"></li>
+   <li><b>PWD:</b><br>A command used to print the current working directory.<br>  <img src="pwd/help.PNG"></li>
 
-   <li><b>PUT:</b><br>A command used to upload files to the server.<img src="src/put.PNG"> <br><b>Note: </b> we simulated the case of uploading hidden files too.
-    <img src="src/putdot.PNG">
+   <li><b>PUT:</b><br>A command used to upload files to the server.<br><img src="src/put.PNG"> <br><b>Note: </b> we simulated the case of uploading hidden files too.
+    <br><img src="src/putdot.PNG">
     </li>
    <li><b>CHMOD:</b><br>A command used to change the permissions of a file. This command needs root privileges.
      <img src="src/chmod.PNG">
    </li>
    <li><b>SU or ROOT:</b><br>A command used to change to root privileges. <img src="src/root.PNG"></li>
    <li><b>ASCII:</b><br>A command used to switch to ASCII mode to transfer files.  <img src="src/ascii.PNG"></li>
-   <li><b>BINARY:</b><br>A command used to switch to BINARY mode to transfer files. <img src="src/binary.PNG"></li>
+   <li><b>BINARY:</b><br>A command used to switch to BINARY mode to transfer files.</li>
    <li><b>GET:</b><br>A command used to Download files from the ftp server.</li>
-   <li><b>QUIT:</b><br>A command used to end the session and disconnect from the FTP server. <img src="src/quit.PNG"></li>
+   <li><b>QUIT:</b><br>A command used to end the session and disconnect from the FTP server.<br> <img src="src/quit.PNG"></li>
    <li><b>BYE:</b><br>An alternative command to the Quit command.</li>
   
   
