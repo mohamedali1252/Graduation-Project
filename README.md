@@ -24,7 +24,7 @@ To Run the SSH HoneyPot you should use `python3 SSH.py` and you should have the 
 File Transfer Protocol is a protocol to transfer files between machines on the same network.
 This honeypot simulates the FTP service from the server side. It simulates both a legitimate user session that connects using a username and a password and also it simulates a guest session i.e anonymous session.
 
-The Code of the FTP HP is written in python.<br>
+The Code of the FTP HoneyPot is written in python.<br>
 <h2>The Required Modules</h2>
 
 - **pickle** using `pip install pickle-mixin`  
@@ -35,11 +35,39 @@ After running FTP HoneyPot file named **ftplog.txt** will be created and it has 
 Exapmle of the **ftplog.txt** file:  
 ![ftp](src/ftp-ex.JPG)  
 <br>
-<h2>The Log file</h2> is in csv format as each connection represents a line in the file where each line .i.e connection consists of a set of comma separated features <br>these are a subset of the NSL-KDD dataset Features.
+<h2>The Log file</h2> It is in CSV format as each connection represents a line in the file where each line .i.e connection consists of a set of comma separated features <br>these are a subset of the NSL-KDD dataset Features.
 <br>
-To Run the FTP Honeypot you should use  
+<h2>To Run the FTP Honeypot: </h2> you should use  
 - `python3 ftppot.py`  
 <br>
+<h2>Commands Supported by the FTP Honeypot:</h2>
+<ol>
+  <li><b>Help:</b><br>
+Help command is used to show the available commands that are supported on the FTP server.
+</li>
+  <li><b>FEAT:</b><br>An alternative command to HELP to show the available features.
+  </li>
+</li>
+  <li><b>LS:</b><br>A Command used to list the content of the current working directory excluding the hidden ones.
+  </li>
+    <li><b>LS -la:</b><br>A Command used to list the content of the current working directory including all hidden files and subdirectories.
+  </li>
+     <li><b>MKDIR:</b><br>A command used to make a new directory.
+  </li>
+  <li><b>CWD:</b><br>A command used to change the current working directory .i.e to navigate to another one.</li>
+   <li><b>PWD:</b><br>A command used to print the current working directory.</li>
+   <li><b>PUT:</b><br>A command used to upload files to the server.</li>
+   <li><b>PUT:</b><br>A command used to upload files to the server.<br><b>Note: </b> we simulated the case of uploading hidden files too.</li>
+   <li><b>CHMOD:</b><br>A command used to change the permissions of a file. This command needs root privileges.</li>
+   <li><b>SU or ROOT:</b><br>A command used to change to root privileges.</li>
+   <li><b>ASCII:</b><br>A command used to switch to ASCII mode to transfer files.</li>
+   <li><b>BINARY:</b><br>A command used to switch to BINARY mode to transfer files.</li>
+   <li><b>GET:</b><br>A command used to Download files from the ftp server.</li>
+   <li><b>QUIT:</b><br>A command used to end the session and disconnect from the FTP server.</li>
+   <li><b>BYE:</b><br>An alternative command to the Quit command.</li>
+  
+  
+</ol> 
 3. SMTP:  
 Simple Mail Transfer Protocol is a protocol for transfer the mails from one machine to other using  telnet.  
 
