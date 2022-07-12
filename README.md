@@ -78,7 +78,7 @@ Exapmle of the **ftplog.txt** file:
    <li><b>SU or ROOT:</b><br>A command used to change to root privileges. <br><img src="src/root.PNG"></li>
    <li><b>ASCII:</b><br>A command used to switch to ASCII mode to transfer files. <br> <img src="src/ascii.PNG"></li>
    <li><b>BINARY:</b><br>A command used to switch to BINARY mode to transfer files.</li>
-   <li><b>GET:</b><br>A command used to Download files from the ftp server.</li>
+   <li><b>GET:</b><br>A command used to Download files from the ftp server.<br> <img src="src/get.PNG"></li>
    <li><b>QUIT:</b><br>A command used to end the session and disconnect from the FTP server.<br> <img src="src/quit.PNG"></li>
    <li><b>BYE:</b><br>An alternative command to the Quit command.</li>
   
