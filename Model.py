@@ -96,17 +96,16 @@ input_size = len(x_train.columns)
 
 deep_model = Sequential()
 deep_model.add(Dense(256, input_dim=input_size, activation='softplus'))
-#deep_model.add(Dropout(0.2))
 deep_model.add(Dense(128, activation='relu'))
 deep_model.add(Dense(64, activation='relu'))
 deep_model.add(Dense(32, activation='relu'))
-#deep_model.add(Dense(18, activation='softplus'))
 deep_model.add(Dense(11, activation='softmax'))
 
 deep_model.compile(loss='categorical_crossentropy',
                    optimizer='adam',
-                   #(learning_rate=0.001, beta_1=0.9, beta_2=0.999, amsgrad=True),
+                   (learning_rate=0.001, beta_1=0.9, beta_2=0.999, amsgrad=True),
                    metrics=['accuracy'])
+
 y_train_econded = label_encoder.transform(y_train)
 y_val_econded = label_encoder.transform(y_val)
 y_test_econded = label_encoder.transform(y_test)
