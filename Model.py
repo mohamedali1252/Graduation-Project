@@ -58,7 +58,8 @@ print(proc_test_df.shape)
 proc_train_df = pd.concat([proc_train_df, proc_train_other_sampled], axis=0)
 proc_test_df = pd.concat([proc_test_df, proc_test_other_sampled], axis=0)
 
-norm_cols = [ 'duration', 'src_bytes', 'dst_bytes', 'hot', 'num_compromised', 'num_root', 'num_file_creations', 'count', 'srv_count', 'dst_host_count', 'dst_host_srv_count']
+norm_cols = [ 'duration', 'src_bytes', 'dst_bytes', 'hot', 'num_compromised', 'num_root', 'num_file_creations', 'count',
+             'srv_count', 'dst_host_count', 'dst_host_srv_count']
 
 for col in norm_cols:
     proc_train_df[col] = np.log(proc_train_df[col]+1e-6)
