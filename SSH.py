@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+
+#needed libraries 
 import argparse
 import threading
 import socket
@@ -15,6 +17,7 @@ from random import random
 from random import randint
 import time
 
+#global variables
 HOST_KEY = paramiko.RSAKey(filename='server.key')
 SSH_BANNER = "SSH-2.0-OpenSSH_8.2p1 Ubuntu-4ubuntu0.1"
 
@@ -24,7 +27,9 @@ RIGHT_KEY = '\x1b[C'.encode()
 LEFT_KEY = '\x1b[D'.encode()
 BACK_KEY = '\x7f'.encode()
 
-logging.basicConfig(  # to provide the logging info that we recieve from the attacker
+#logger
+#to provide the logging info that we recieve from the attacker
+logging.basicConfig(
     filename="ssh_honeypot.log",
     filemode='a',
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -32,6 +37,7 @@ logging.basicConfig(  # to provide the logging info that we recieve from the att
 
 logger = logging.getLogger('logger')
 
+#add another logger for the machine model features
 
 def setup_logger(logger_name, log_file, level=logging.DEBUG):
     l = logging.getLogger(logger_name)
@@ -45,24 +51,22 @@ def setup_logger(logger_name, log_file, level=logging.DEBUG):
     l.addHandler(fileHandler)
     l.addHandler(streamHandler)
 
-
 setup_logger('log2', "feature.log")
 logger_2 = logging.getLogger('log2')
 
-
+#some function used to response for commands supported
 def ping(command):
     cmd = command
     # response=""
     result = cmd.split()
     host = result[1]
-    response = "PING " + str(host) + " 56(84) bytes of data.\n"
+    response = "PING " + str(host) + " 56(84) bytes of data.\n\r"
     for i in range(0, 4):
         time.sleep(2 / 100)
         time_ping = str((random() * 10) + 20)
         ttl = str((randint(0, 5) * 10))
-        response += "64 bytes from" + host + " : icmp_seq=" + str(i) + " ttl=" + ttl + " time=" + time_ping + "ms\n"
+        response += "64 bytes from" + host + " : icmp_seq=" + str(i) + " ttl=" + ttl + " time=" + time_ping + "ms\n\r"
     return response
-
 
 def Ls(command):
     response = ""
@@ -81,7 +85,6 @@ def Ls(command):
             response = etc
     return response
 
-
 def cat(command):
     cmd = command
     result = cmd.split()
@@ -96,52 +99,43 @@ def cat(command):
         response = "File not found"
     return response
 
-
 def ifconfig():
     response = "ens3: Link encap:Ethernet  HWaddr fa:16:3e:ea:69:d3\n\r" + "        inet addr:192.168.0.3  Bcast:192.168.0.255  Mask:255.255.255.0\n\r" + "        inet6 addr: fe80::f816:3eff:feea:69d3/64 Scope:Link\n\r" + "        UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1\n\r" + "        RX packets:0 errors:0 dropped:0 overruns:0 frame:0\n\r" + "        TX packets:2 errors:0 dropped:0 overruns:0 carrier:0\n\r" + "        collisions:0 txqueuelen:0\n\r" + "        RX bytes:0 (0.0 B)  TX bytes:180 (180.0 B)\n\r\n\r" + "lo: Link encap:Local Loopback \n\r" + "        inet addr:127.0.0.1  Mask:255.0.0.0 \n\r" + "        inet6 addr: ::1/128 Scope:Host \n\r" + "        UP LOOPBACK RUNNING  MTU:65536  Metric:1 \n\r" + "        RX packets:237 errors:0 dropped:0 overruns:0 frame:0 \n\r" + "        TX packets:237 errors:0 dropped:0 overruns:0 carrier:0 \n\r" + "        collisions:0 txqueuelen:1 \n\r" + "        RX bytes:16818 (16.8 KB)  TX bytes:16818 (16.8 KB) \n\r"
     return response
-
 
 def ipa():
     response = "1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1\n\r" + "    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00\n\r" + "    inet 127.0.0.1/8 scope host lo\n\r" + "       valid_lft forever preferred_lft forever\n\r" + "    inet6 ::1/128 scope host\n\r" + "       valid_lft forever preferred_lft forever\n\r" + "2: ens3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000\n\r" + "    link/ether fa:16:3e:d6:f2:dd brd ff:ff:ff:ff:ff:ff\n\r" + "    inet 192.168.0.183/24 brd 192.168.0.255 scope global ens3\n\r" + "       valid_lft forever preferred_lft forever\n\r" + "    inet6 fe80::f816:3eff:fed6:f2dd/64 scope link\n\r" + "       valid_lft forever preferred_lft forever \n\r"
     return response
 
-
 def uname():
     response = "Linux\n\r"
     return response
-
 
 def whoami():
     response = "Ubuntu 18.04.4\n\r"
     return response
 
-
 def hostname():
     response = "Ubuntu 18.04.4\n\r"
     return response
-
 
 def route():
     response = "Destination     Gateway         Genmask         Flags Metric Ref    Use Iface\n\r" + "default         192.168.1.2     0.0.0.0         UG    1024   0        0 eth0\n\r" + "192.168.1.0     *               255.255.255.0   U     0      0        0 eth0\n\r"
     return response
 
-
 def ps():
     response = "PID   TTY          TIME CMD\n\r12330 pts/0    00:00:00 bash\n\r21621 pts/0    00:00:00 ps"
     return response
-
 
 def psaux():
     response = "USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND\n\rroot         1  0.0  0.0    892   572 ?        Sl   Nov28   0:00 /init\r\nroot       227  0.0  0.0    900    80 ?        Ss   Nov28   0:00 /init\n\rroot       228  0.0  0.0    900    88 ?        S    Nov28   0:00 /init\n\rzaphod     229  0.0  0.1 749596 31000 pts/0    Ssl+ Nov28   0:15 docker\n\rroot       240  0.0  0.0      0     0 ?        Z    Nov28   0:00 [init] <defunct>\n\rroot       247  0.0  0.0    900    88 ?        S    Nov28   0:00 /init\n\rroot       248  0.0  0.1 1758276 31408 pts/1   Ssl+ Nov28   0:10 /mnt/wsl/docker-desktop/docker-desktop-proxy\n\rroot       283  0.0  0.0    892    80 ?        Ss   Dec01   0:00 /init\n\rroot       284  0.0  0.0    892    80 ?        R    Dec01   0:00 /init\n\rzaphod     285  0.0  0.0  11964  5764 pts/2    Ss   Dec01   0:00 -zsh\n\rzaphod     343  0.0  0.0  23764  9836 pts/2    T    17:44   0:00 vi foo\n\rroot       349  0.0  0.0    892    80 ?        Ss   17:45   0:00 /init\n\rroot       350  0.0  0.0    892    80 ?        S    17:45   0:00 /init\n\rzaphod     351  0.0  0.0  11964  5764 pts/3    Ss+  17:45   0:00 -zsh\n\rzaphod     601  0.0  0.0  10612  3236 pts/2    R+   18:24   0:00 ps aux"
     return response
 
-
 def netstat():
     response = "UDP\n\r \n\r      udpInDatagrams      =  39228     udpOutDatagrams     =  2455\n\r       udpInErrors         =     0\n\r \n\rTCP\n\r \n\r      tcpRtoAlgorithm     =     4      tcpMaxConn          =    -1\n\r      tcpRtoMax           = 60000      tcpPassiveOpens     =     2\n\r      tcpActiveOpens      =     4      tcpEstabResets      =     1\n\r      tcpAttemptFails     =     3      tcpOutSegs          =   315\n\r      tcpCurrEstab        =     1      tcpOutDataBytes     = 10547\n\r     tcpOutDataSegs      =   288      tcpRetransBytes     =  8376\n\r      tcpRetransSegs      =    29      tcpOutAckDelayed    =    23\n\r      tcpOutAck           =    27      tcpOutWinUpdate     =     2\n\r      tcpOutUrg           =     2      tcpOutControl       =     8\n\r      tcpOutWinProbe      =     0      tcpOutFastRetrans   =     1\n\r      tcpOutRsts          =     0\n\r      tcpInSegs           =   563      tcpInAckBytes       = 10549\n\r      tcpInAckSegs        =   289      tcpInAckUnsent      =     0\n\r      tcpInDupAck         =    27      tcpInInorderBytes   =   673\n\r      tcpInInorderSegs    =   254      tcpInInorderBytes   =   673\n\r      tcpInUnorderSegs    =     0      tcpInUnorderBytes   =     0\n\r      tcpInDupSegs        =     0      tcpInDupBytes       =     0\n\r      tcpInPartDupSegs    =     0      tcpInPartDupBytes   =     0\n\r      tcpInPastWinSegs    =     0      tcpInPastWinBytes   =     0\n\r      tcpInWinProbe       =     0      tcpInWinUpdate      =   237    \n\r      tcpInClosed         =     0      tcpRttNoUpdate      =    21\n\r      tcpRttUpdate        =   266      tcpTimRetrans       =    26\n\r      tcpTimRetransDrop   =     0      tcpTimKeepalive     =     0\n\r      tcpTimKeepaliveProbe=     0      tcpTimKeepaliveDrop =     0\n\r \n\rIP\n\r \n\r      ipForwarding        =     2      ipDefaultTTL        =   255\n\r      ipInReceives        =  4518      ipInHdrErrors       =     0\n\r      ipInAddrErrors      =     0      ipInCksumErrs       =     0\n\r      ipForwDatagrams     =     0      ipForwProhibits     =     0\n\r      ipInUnknownProtos   =     0      ipInDiscards        =     0\n\r      ipInDelivers        =  4486      ipOutRequests       =  2805\n\r      ipOutDiscards       =     5      ipOutNoRoutes       =     0\n\r      ipReasmTimeout      =    60      ipReasmReqds        =     2\n\r      ipReasmOKs          =     2      ipReasmReqds        =     2\n\r      ipReasmDuplicates   =     0      ipReasmFails        =     0\n\r      ipFragOKs           =    20      ipReasmPartDups     =     0\n\r      ipFragCreates       =   116      ipFragFails         =     0\n\r      tcpInErrs           =     0      ipRoutingDiscards   =     0\n\r      udpInCksumErrs      =     0      udpNoPorts          =    33\n\r      rawipInOverflows    =     0      udpInOverflows      =     6\n\r \n\rICMP\n\r \n\r      icmpInMsgs          =     0      icmpInErrors        =     0\n\r      icmpInCksumErrs     =     0      icmpInUnknowns      =     0\n\r      icmpInDestUnreachs  =     0      icmpInTimeExcds     =     0\n\r      icmpInParmProbs     =     0      icmpInSrcQuenchs    =     0\n\r      icmpInRedirects     =     0      icmpInBadRedirects  =     0\n\r      icmpInEchos         =     0      icmpInEchoReps      =     0\n\r      icmpInTimestamps    =     0      icmpInTimestampReps =     0\n\r      icmpInAddrMasks     =     0      icmpInAddrMaskReps  =     0\n\r      icmpInFragNeeded    =     0      icmpOutMsgs         =     7\n\r      icmpOutDestUnreachs =     1      icmpOutErrors       =     0\n\r      icmpOutDrops        =     5      icmpOutTimeExcds    =     0\n\r      icmpOutParmProbs    =     0      icmpOutSrcQuenchs   =     6\n\r      icmpOutRedirects    =     0      icmpOutEchos        =     0\n\r      icmpOutEchoReps     =     0      icmpOutTimestamps   =     0\n\r      icmpOutTimestampReps=     0      icmpOutAddrMasks    =     0\n\r      icmpOutAddrMaskReps =     0      icmpOutFragNeeded   =     0\n\r      icmpInOverflows     =     0\n\r \n\r \n\rIGMP:\n\r \n\r0 messages received\n\r0 messages received with too few bytes\n\r0 messages received with bad checksum\n\r0 membership queries received\n\r0 membership queries received with invalid field(s)\n\r0 membership reports received\n\r0 membership reports received with invalid field(s)\n\r0 membership reports received for groups to which we belong\n\r0 membership reports sent"
     return response
 
-
+#function that sends the response for commands if found or send "command not found" if not
 def handle_cmd(cmd, chan, ip, port):
     commands = ["ls","pwd","ping","echo","cat","ifconfig","ip a","uname","whoami","hostname","route","ps","ps aux","netstat","su root"]
     response = ""
@@ -178,6 +172,30 @@ def handle_cmd(cmd, chan, ip, port):
     #############################
     elif cmd.startswith("su root"):
         response = "su: Authentication failure"
+    elif cmd.startswith("cd /root/"):  
+        response = ""
+    elif cmd.startswith("gcc"):  
+        response = ""
+    elif cmd.startswith("gedit"):  
+        response = ""
+    elif cmd.startswith("./"):  
+        response = ""
+    elif cmd.startswith("python"):  
+        response = ""
+    elif cmd.startswith("chmod" ):  
+        response = ""     
+    elif cmd.startswith("chown"):  
+        response = ""
+    elif cmd.startswith("chgrp"):  
+        response = ""
+    elif cmd.startswith(">"):  
+        response = ""
+    elif cmd.startswith("touch"):  
+        response = ""
+    elif cmd.startswith("cat >"):  
+        response = ""
+    elif cmd.startswith("echo"):  
+        response = ""     
     else:
         response = "%command not found"
     if response != '':
@@ -185,6 +203,8 @@ def handle_cmd(cmd, chan, ip, port):
         response = response + "\r\n"
     chan.send(response)
 
+
+    #still not commented
 
 class BasicSshHoneypot(paramiko.ServerInterface):
     client_ip = None
@@ -248,52 +268,49 @@ class BasicSshHoneypot(paramiko.ServerInterface):
         return True
 
 
-
-
 def handle_connection(client, addr, port):
     client_ip = addr[0]
     client_port = addr[1]
     username = ""
     #######################
+    #intialize the features 
     date_time = 0
     src_ip = addr[0]
     src_port = addr[1]
     dst_ip = 0
     dst_port = 0
-    hot = 0
-    num_failed_login = 0
-    logged_in = 0
-    num_compromised_file = 0  ###########
-    root_shell = 0
-    su_attempted = 0
-    num_root = 0  # each command start with root and all commands if user is root
-    num_file_creations = 0
-    num_shells = 1
-    num_access_files = 0
-    num_outbound_cmds = 0     ########
-    is_hot_login = 0
-    is_guest_login = 0
-    ##############################
+    hot = 0                     # it counts if the user use one of the following cd /, cd /root/, gcc, gedit, ./ and python
+    land = 0                    # true if the src ip and port is the same as the dis ip and port 
+    num_failed_login = 0        # it counts if the user entered  wrong password
+    logged_in = 0               # it counts the user logged in successfully
+    num_compromised_file = 0  
+    root_shell = 0              # username root or Root
+    su_attempted = 0            # su root command used
+    num_root = 0                # each command start with root and all commands if the username is 'root'
+    num_file_creations = 0      # it counts if the user use one of the following >, touch, cat > and echo
+    num_shells = 1              # equale zero if the user does not ask for a shell 
+    num_access_files = 0        # it counts if the user use one of the following chmod, chown and chgrp
+    num_outbound_cmds = 0     
+    is_hot_login = 0            # username is root or admin
+    is_guest_login = 0          # username not root or admin
+    #############################
+    ## to get the ip of the honeypot
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("0.0.0.0", 80))
     local_ip = s.getsockname()[0]
     s.close()
-    print(local_ip)
     ############################
     # at release
     protocol_type = "tcp"
     service_type = "ssh"
     start = time.time()
     ##########start = now()
-    land = 0
     dst_port = port
     dst_ip = local_ip
-    
     ###################
     s=str(client)
     s=s.split('laddr',2)
     s=s[1].split("'",2)
-    #print(s[1])
     dst_ip = s[1]
     
 
@@ -314,7 +331,6 @@ def handle_connection(client, addr, port):
 
         except paramiko.SSHException:
             print('*** SSH negotiation failed.')
-            # num_failed_login = num_failed_login + 1
 
             raise Exception("SSH negotiation failed")
 
@@ -326,7 +342,6 @@ def handle_connection(client, addr, port):
 
         chan.settimeout(120)  # time to end the ssh connection if there is no interaction
        
-
         if transport.remote_mac != '':
             logger.info('Client mac ({},{}): {}'.format(client_ip, client_port, transport.remote_mac))
 
@@ -381,9 +396,9 @@ def handle_connection(client, addr, port):
                 if (root_shell):
                     num_root = num_root + 1
                 logger.info('Command receied ({},{}): {}'.format(client_ip, client_port, command))
-                # detect_url(command, client_ip)
 
-                if command == "exit" or command == "quit" or command == "logout":
+                #end the connection with any of this words
+                if command == "exit" or command == "quit" or command == "logout": 
                     end = time.time()
                     duration = end - start
                     date_time = float(start) + 6 * 60 * 60
@@ -391,6 +406,7 @@ def handle_connection(client, addr, port):
                     date_time = time.strftime("[%d/%b/%Y %H:%M:%S]", date_time)
                     if (root_shell):
                         num_root = num_root + 1
+                    #log the feature foe the machine model case 1
                     logger_2.info(
                         '{} {} {} {} {},{},{},{},{},{},{},{},{},{},{},{},{},{}'.format(
                             str(date_time), str(src_ip), str(src_port), str(dst_ip), str(dst_port), str(hot),
@@ -419,12 +435,11 @@ def handle_connection(client, addr, port):
                         command =subcommand
                     if command.startswith("chmod") or command.startswith("chown") or command.startswith("chgrp"):
                     	num_access_files += 1
-                    if command.startswith("cd /") or command.startswith("cd /root/") or command.startswith("gcc") or command.startswith("gedit") or command.startswith("./") or command.startswith("python") :########
+                    if command.startswith("cd /") or command.startswith("cd /root/") or command.startswith("gcc") or command.startswith("gedit") or command.startswith("./") or command.startswith("python") :
                     	hot += 1
-                    	
                     if command.startswith(">") or command.startswith("touch") or command.startswith("cat > ") or command.startswith("echo"):
                         num_file_creations = num_file_creations + 1
-                        if command.startswith(">" or "cat > "):
+                        if command.startswith(">" or "cat > "): #simulate writing in a file 
                             txt = ""
                             txt1 = ""
                             while not txt1.endswith('\x03'):
@@ -447,9 +462,9 @@ def handle_connection(client, addr, port):
             date_time = time.localtime(date_time)
             date_time = time.strftime("[%d/%b/%Y %H:%M:%S]", date_time)
             logger.info(
-                'connection closed from: {}, port : {} , time: {},protocol_type: {},service_type: {},logged_in:{}, su_attempted:{}, Num_file_creations: {},Root_shell: {}'.format(
-                    client_ip, client_port, duration, protocol_type, service_type, str(logged_in), str(su_attempted),
-                    str(num_file_creations), str(root_shell)))
+                'connection closed from: {}, port : {} , time: {}'.format(
+                    client_ip, client_port, duration))
+            #log the feature foe the machine model case 2
             logger_2.info(
                 '{} {} {} {} {},{},{},{},{},{},{},{},{},{},{},{},{},{}'.format(
                     str(date_time), str(src_ip), str(src_port), str(dst_ip), str(dst_port), str(hot),
@@ -475,6 +490,7 @@ def handle_connection(client, addr, port):
         if (username == "root" or username == "Root"):
             is_hot_login = 1
         num_failed_login = server.num_failed
+        #log the feature foe the machine model case 3
         logger_2.info(
             '{} {} {} {} {},{},{},{},{},{},{},{},{},{},{},{},{},{} '.format(
                 str(date_time), str(src_ip), str(src_port), str(dst_ip), str(dst_port), str(hot),
