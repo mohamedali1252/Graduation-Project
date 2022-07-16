@@ -12,6 +12,8 @@ from mininet.log import lg, info
 from mininet.link import Intf
 from mininet.topolib import TreeNet
 from mininet.node import OVSSwitch, Controller, RemoteController
+import sys
+
 
 class RoutingTopo( Topo ):
     def build(self):
@@ -19,17 +21,21 @@ class RoutingTopo( Topo ):
         h1 = self.addHost( 'h1',mac="00:00:00:00:00:01",ip="10.0.0.1/24")
         h2 = self.addHost( 'h2',mac="00:00:00:00:00:02",ip="10.0.0.2/24")
         h3 = self.addHost( 'h3',mac="00:00:00:00:00:03",ip="10.0.0.3/24")
+        h4 = self.addHost( 'h4',mac="00:00:00:00:00:04",ip="10.0.0.4/24")
+        
         s1 = self.addSwitch('s1',mac="00:00:00:00:00:05",ip="10.0.0.5/24")
         # Add links
         self.addLink( h1, s1 )
         self.addLink( h2, s1 )
         self.addLink( h3, s1)
+        self.addLink( h4, s1)
         
 
 if __name__ == '__main__':
     lg.setLogLevel( 'info')
     topo = RoutingTopo()
-    c1 = RemoteController('c1',ip='127.0.0.1')
+    cip = sys.argv[1]
+    c1 = RemoteController('c1',ip=cip)
     net = Mininet(topo=topo,controller=c1)
     # Add NAT connectivity
     s1 = net.switches[0]

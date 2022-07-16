@@ -36,12 +36,16 @@ from time import strftime
 import time
 import csv
 
+sys.path.insert(1, '/home/kali/Desktop/all/')
+import settings as sm
+
+
 
 counter = 0
 flag = False
 dst = "00:00:00:00:00:02"
-UI_path = "/home/kali/Downloads/Graduation_Project-UI/sample.csv"
-ML_path = "/home/kali/Desktop/ML/test.csv"
+UI_path = sm.UI_PATH
+ML_path = sm.ML_PATH
 blocked = []
 
 
@@ -108,14 +112,16 @@ class SimpleSwitch13(app_manager.RyuApp):
                 file_size=os.path.getsize(ML_path) 
                 if file_size == 0:
                         #os.system("pip install tensorflow")
-                        os.system('python /home/kali/Desktop/HoneyPot-Neural-network-classifier/readfrom_db.py')
-                        os.system("python /home/kali/Desktop/HoneyPot-Neural-network-classifier/classifier.py")
+                        readfrom = "python " + sm.READFROM_PATH
+                        os.system(readfrom)
+                        classifier = "python " + sm.CLASSIFIER_PATH
+                        os.system(classifier)
                         print("da5al fel if /n ****************************")        
                         self.take_action()
                         
-                        #with open("/home/kali/Desktop/ML/test.csv","w") as f:
-                         #       pass    
-                #os.system("python3 /home/kali/UI/main.py")
+                        with open(sm.TEST_FILE_PATH,"w") as f:
+                        	pass 
+                       	   
     
     def unique(self,list1):
         unique_list = []
