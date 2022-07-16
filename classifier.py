@@ -4,6 +4,8 @@ from tensorflow import keras
 import sys
 import os
 
+sys.path.insert(1, '/home/kali/Desktop/all/')
+import settings as sm
 
 def classify (inputfilepath):
     col_names = ["duration", "protocol_type", "service", "flag", "src_bytes",
@@ -160,11 +162,11 @@ def classify (inputfilepath):
     labels = ['back', 'ipsweep', 'neptune', 'nmap', 'normal', 'other',
               'portsweep', 'satan', 'smurf', 'teardrop', 'warezclient']
 
-    model = keras.models.load_model('/home/kali/Desktop/HoneyPot-Neural-network-classifier/my_model.h5')
+    model = keras.models.load_model(sm.MODEL_PATH)
     pred = model.predict(fin)
     result = np.argmax(pred, axis=1)
-    f = open("/home/kali/Desktop/HoneyPot-Neural-network-classifier/ips.txt", "r")
-    to_monitor = open("/home/kali/Desktop/ML/test.csv", "w")
+    f = open(sm.CLASS_IPS_PATH, "r")
+    to_monitor = open(sm.TEST_FILE_PATH, "w")
     lines = f.readlines()
     
     #f = open("/home/kali/Desktop/ML/test.csv")
@@ -179,7 +181,7 @@ def classify (inputfilepath):
     	i=i+1
 
 #os.system('python /home/kali/Desktop/HoneyPot-Neural-network-classifier/readfrom_db.py')
-file_size=os.path.getsize('/home/kali/Desktop/HoneyPot-Neural-network-classifier/dika.csv') 
+file_size=os.path.getsize(sm.FEATURES_DB_PATH) 
 if file_size != 0: 
-	classify('/home/kali/Desktop/HoneyPot-Neural-network-classifier/dika.csv')
-#os.system('redis-cli flushdb')
+	classify(sm.FEATURES_DB_PATH)
+os.system('redis-cli flushdb')
