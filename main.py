@@ -15,13 +15,13 @@ class Window(QtWidgets.QMainWindow):
     def init_ui(self) -> None:
         """Init the UI of the obect.
         """
-        self.setWindowTitle("Intelligence Honeypot on SDN")
+        self.setWindowTitle("Intelligent Honeypot on SDN")
 
         self.setMinimumSize(QtCore.QSize(1100, 150))
 
         central_widget = QtWidgets.QWidget()
         self.main_layout = QtWidgets.QVBoxLayout()
-        title = QtWidgets.QLabel("Intelligence Honeypot on SDN")
+        title = QtWidgets.QLabel("Intelligent Honeypot on SDN")
         title.setFont(QtGui.QFont("Arial", 20, 1000))
         title.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
@@ -57,7 +57,7 @@ class Window(QtWidgets.QMainWindow):
         self.main_layout.addWidget(scroll)
 
         titles = ["Date", "Time", "Source IP", "Destination IP",
-                  "Attack Type", "Protocol Type", "Action Taken"]
+                  "Attack Type", "Detected by", "Action Taken"]
 
         for index, title in enumerate(titles):
             corresponding_info = infos[index]
