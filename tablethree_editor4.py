@@ -38,14 +38,11 @@ def table_three(connections_after,filename, mode):
     connections_count = 0
     file_name = open(filename, "r")
     for x in file_name:
-        #print(x)
         con_array.append(x.split(','))
         connections_count += 1
     file_name.close()
 
     for index, con in enumerate(con_array):
-        #print('index', index + 1)
-        #print("connection to check on >>", con)
 
 
         temp_count = 0
@@ -71,48 +68,42 @@ def table_three(connections_after,filename, mode):
         temp_Dst_host_srv_rerror_rate = 0
 
         window_count = 0
-        #print('new con to check on00000000000000000000000000000000000000000000000')
 
         for con2 in con_array:
 
-
+            #2 sec time window
             if ((time_insec(float(con[1])) - time_insec(float(con2[1]))) <= 2.0) & (
                     (time_insec(float(con[1])) - time_insec(float(con2[1]))) >= 0):
-                #print(time_insec(float(con[0])) - time_insec(float(con2[0])))
-                #print('con1===',con)
-                #print('VS')
-                #print('con2',con2)
 
 
-                # if same src (not sure) & same dst  Based on the doctor opinion and some papers 3la ALLAH ba2a
+                #count: if same src (not sure) & same dst  
                 if ((con[4] == con2[4]) & (con[5] == con2[5])):
 
-
+                    #23_count
                     temp_count += 1
-                    # 25_Serror_rate
+                    # 25_Serror_rate : if the connection_flag is one of (SO,S1,S2,S3)
                     if con2[10] in ('S0', 'S1', 'S2', 'S3'):
                         temp_Serror_rate += 1
-                    # 27_Rerror_rate
+                    # 27_Rerror_rate: if con_flag is rej
                     if con2[10] == 'REJ':
                         temp_Rerror_rate += 1
-                    # 29_same_srv_rate
+                    # 29_same_srv_rate : if both connections have the same service
                     if con[3] == con2[3]:
                         temp_same_srv_rate += 1
 
-                    # srv: if same src &  same dst port only??????
+                    #24_srv_count: if same src &  same dst port 
                 if ((con[4] == con2[4]) & (con[3] == con2[3])):
                     temp_srv_count += 1
-                    # 26_srv_Serror_rate
+                    #all the coming features are calculated w.r.t the Srv_Count feature:
+                    # 26_srv_Serror_rate: number of cons having the same flag (s0,s1,s2,s3) under the Srv_count feature
                     if con2[10] in ('S0', 'S1', 'S2', 'S3'):
-                        #print('CHECH HENAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
-                        #print(con2)
                         temp_srv_Serror_rate += 1
-                    # 28_srv_Rerror_rate
+                    # 28_srv_Rerror_rate:
                     if con2[10] == 'REJ':
                         temp_Srv_rerror_rate += 1
 
-                    # 31_Srv_diff_host_rate
-                    if con[5] != con2[5]:
+                    # 31_Srv_diff_host_rate: if both connections do not have the same service
+                    if con[5] != con2[5]: 
                         temp_Srv_diff_host_rate += 1
 
         if mode == 1:
@@ -153,38 +144,33 @@ def table_three(connections_after,filename, mode):
                         (time_insec(float(con[1])) - time_insec(float(con2[1]))) >= 0):
 
                     if con2[5] == con[5]:  # same dst IP
-                        # if con[0] == '7':
-                        #     print(con2)
-                        #     print('difference in time=',time_insec(float(con[1])) - time_insec(float(con2[1])))
-                        #     print('time of con= ', time.strftime("[%d/%b/%Y %H:%M:%S]", time.localtime(float(con[1]))))
-                        #     print('time of con2= ', time.strftime("[%d/%b/%Y %H:%M:%S]", time.localtime(float(con2[1]))))
-                        #     print(temp_Dst_host_count)
-                        #     print('and')
-
+                        #32_ Number of connections having the same destination host IP address
                         temp_Dst_host_count += 1
 
 
-
+                        #34_% of cons that were to the same service, among the connections aggregated in dst_host_count (32)
                         if con2[3] == con[3]:  # 34
                             temp_Dst_host_same_srv_rate += 1
+                        #38_% of cons that have activated the flag (4) s0, s1, s2 or s3, among the connections aggregated in dst_host_count (32)
                         if con2[10] in ('S0', 'S1', 'S2', 'S3'):  # 38
                             temp_Dst_host_serror_rate += 1
-
+                        #40_% of consthat have activated the flag (4) REJ, among the connections aggregated in dst_host_count (32)
                         if con2[10] == 'REJ':  # 40
                             temp_Dst_host_rerror_rate += 1
 
                     if con2[3] == con[3]:  # 33 same dst port only
+                        #33_Number of connections having the same destination port only
                         temp_Dst_host_srv_count += 1
-
+                        #36_% of cons that were to the same source port, among the connections aggregated in dst_host_srv_count(33)
                         if con2[2] == con[2]:  # 36
                             temp_Dst_host_same_src_port_rate += 1
-
+                        #37_% of cons that were to different destination machines, among the connections aggregated in dst_host_srv_count (33)
                         if con[5] != con2[5]:  # 37
                             temp_Dst_host_srv_diff_host_rate += 1
-
+                        #39_% of cons that have activated the flag (4) s0, s1, s2 or s3, among the connections aggregated in dst_host_srv_c ount (33)
                         if con2[10] in ('S0', 'S1', 'S2', 'S3'):  # 39
                             temp_Dst_host_srv_serror_rate += 1
-
+                        #41_% of cons that have activated the flag (4) REJ, among the connections aggregated in dst_host_srv_c ount (33)
                         if con2[10] == 'REJ':  # 41
                             temp_Dst_host_srv_rerror_rate += 1
 
@@ -241,9 +227,6 @@ def table_three(connections_after,filename, mode):
 
     # append to the file
 
-    print(len(Dst_host_same_src_port_rate))
-    print(len(Dst_host_srv_diff_host_rate))
-    print(len(connections_after))
 
 
     for index, i in enumerate(connections_after):
