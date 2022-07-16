@@ -1345,5 +1345,3 @@ event conn_weird (name: string, c: connection, addl: string){
 			konexioak[startTime, duration, orig_h, orig_p, resp_h, resp_p]$wrong_fragment=1;
 	}
 }
-
-
